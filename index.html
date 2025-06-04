@@ -7,6 +7,7 @@
 <meta name="description" content="Compra tus cartones para participar en el Bingo Don Sepu. Disfruta de un emocionante juego de bingo en línea y gana increíbles premios. ¡Únete a la diversión!">
 <meta name="author" content="Don Sepu">
 <link rel="stylesheet" href="styles.css">
+<script src="script.js"></script>
 </head>
 <body>
     <main>
@@ -30,9 +31,8 @@
                         <input id="input-quantity" type="number" value="1" min="1" max="2">
                         <button id="btn-increment">+</button>
                     </div>
-                    <div id="values-display">
-                        <p>Valor de hoja:</p><p id="bingo-sheet-value">$??.000</p>
-                        <p>Valor total de la compra:</p><p id="total-value">$??.000</p>
+                    <div id="price-display">
+                        <p>Valor total de la compra:</p><p id="total-price" data-price="5000">$??.000</p>
                     </div>
                 </li>
                 <li>
@@ -42,22 +42,31 @@
                         <input type="text" id="name" name="name" placeholder="Ana María Rodriguez" required>
                         <label for="phone">Teléfono</label>
                         <input type="tel" id="phone" name="phone" required placeholder="3123456789" pattern="[0-9]{10}">
+                    </form>
                 </li>
                 <li>
                     <p>Realiza el pago en una de las siguientes opciones y toma una captura de pantalla del comprobante de pago.</p>
                     <ul id="payment-options">
-                        <li><p>Nequi:</p><p>3123456789</p><button id="btn-copy-nequi-number">Copiar</button></li>
-                        <li><p>Daviplata:</p><p>3123456789</p><button id="btn-copy-daviplata-number">Copiar</button></li>
+                        <li>
+                            <p>Nequi:</p>
+                            <p id="nequi-number">3123456789</p>
+                            <button class="btn-copy" data-target="nequi-number">Copiar</button>
+                        </li>
+                        <li>
+                            <p>Daviplata:</p>
+                            <p id="daviplata-number">3123456789</p>
+                            <button class="btn-copy" data-target="daviplata-number">Copiar</button>
+                        </li>
                     </ul>
                 </li>
-                <li>
+                <li id="payment-proof-container">
                     <p>Sube la captura de pantalla del comprobante de pago.</p>
-                    <input type="file" id="payment-proof" name="payment-proof" accept="image/*" required hidden>
+                    <input type="file" id="payment-proof" name="payment-proof" accept="image/*" form="contact-form" required>
                     <label for="payment-proof" class="custom-payment-proof">Seleccionar archivo</label>
                 </li>
             </ol>
         </section>
 
-        <button id="btn-confirm-buying">Confirmar compra</button>
+        <button id="btn-confirm-buying" type="submit" form="contact-form">Confirmar compra</button>
     </main>
 </body>

@@ -41,6 +41,9 @@ button {
     font-size: 1.2rem;
     cursor: pointer;
 
+    border-radius: .3rem;
+    border: none;
+
     :hover {
         opacity: 0.8;
     }
@@ -151,7 +154,7 @@ p {
 }
 
 
-#values-display {
+#price-display {
     display: grid;
     grid-template-columns: 1fr auto;
     gap: .5rem;
@@ -208,6 +211,19 @@ p {
 }
 
 
+#payment-proof-container {
+    position: relative;
+}
+
+#payment-proof {
+    width: 100%;
+    position: absolute;
+    bottom: 1rem;
+
+    z-index: -1;
+}
+
+
 .custom-payment-proof {
     height: 2.5rem;
 
@@ -237,9 +253,6 @@ p {
 
     color: #FFF;
     background-color: #4CAF50;
-
-    border-radius: 0.3rem;
-    border: none;
 
     :hover {
         opacity: 0.8;
