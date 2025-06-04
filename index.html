@@ -8,65 +8,66 @@
 <meta name="author" content="Don Sepu">
 <link rel="stylesheet" href="styles.css">
 <script src="script.js"></script>
+<script src="https://kit.fontawesome.com/6a6cfa52c5.js" crossorigin="anonymous"></script>
 </head>
 <body>
     <main>
         <section id="main-section">
             <div id="logo"></div>
 
-            <h1>Compra de Cartones</h1>
-            <p>Para participar en el Bingo Don Sepu, debes comprar tus cartones. Cada cartón te da la oportunidad de ganar premios emocionantes. Asegúrate de adquirirlos antes de que comience el juego.</p>
-            <p>Recuerda que los cartones son limitados, así que no esperes demasiado para hacer tu compra.</p>
+            <h1>Compra de Combos</h1>
+            <p>Para participar en el Bingo Don Sepu, debes comprar tus combos. Cada combo te da la oportunidad de ganar premios emocionantes. Asegúrate de adquirirlos antes de que comience el juego.</p>
+            <p>Recuerda que los combos son limitados, así que no esperes demasiado para hacer tu compra.</p>
             <p>¡Buena suerte y que disfrutes del juego!</p>
         </section>
         
         <section id="buying-process-section">
             <h2>Proceso de Compra</h2>
-            <p>Para comprar tus cartones, sigue estos pasos:</p>
+            <p>Para comprar tus combos, sigue estos pasos:</p>
             <ol>
-                <li>
-                    <p>Selecciona la cantidad de hojas que deseas comprar (1 hoja trae 6 cartones).</p>
+                <li id="first-step">
+                    <p><span class="numeration">1</span>Selecciona la cantidad de combos que deseas comprar (1 combo trae 6 cartones).</p>
                     <div id="quantity-controls">
-                        <button id="btn-decrement">-</button>
+                        <button id="btn-decrement"><i class="fa-solid fa-minus"></i></button>
                         <input id="input-quantity" type="number" value="1" min="1" max="2">
-                        <button id="btn-increment">+</button>
+                        <button id="btn-increment"><i class="fa-solid fa-plus"></i></button>
                     </div>
                     <div id="price-display">
                         <p>Valor total de la compra:</p><p id="total-price" data-price="5000">$??.000</p>
                     </div>
                 </li>
-                <li>
-                    <p>Ingresa tus datos de contacto.</p>
+                <li id="second-step">
+                    <p><span class="numeration">2</span>Ingresa tus datos de contacto.</p>
                     <form id="contact-form">
                         <label for="name">Nombre y apellidos</label>
                         <input type="text" id="name" name="name" placeholder="Ana María Rodriguez" required>
-                        <label for="phone">Teléfono</label>
+                        <label for="phone">Número de WhastApp</label>
                         <input type="tel" id="phone" name="phone" required placeholder="3123456789" pattern="[0-9]{10}">
                     </form>
                 </li>
-                <li>
-                    <p>Realiza el pago en una de las siguientes opciones y toma una captura de pantalla del comprobante de pago.</p>
+                <li id="third-step">
+                    <p><span class="numeration">3</span>Realiza el pago en una de las siguientes opciones y toma una captura de pantalla o foto del comprobante de pago.</p>
                     <ul id="payment-options">
                         <li>
-                            <p>Nequi:</p>
+                            <strong>Nequi:</strong>
                             <p id="nequi-number">3123456789</p>
-                            <button class="btn-copy" data-target="nequi-number">Copiar</button>
+                            <button class="btn-copy" data-target="nequi-number"><i class="fa-solid fa-copy"></i>Copiar</button>
                         </li>
                         <li>
-                            <p>Daviplata:</p>
+                            <strong>Daviplata:</strong>
                             <p id="daviplata-number">3123456789</p>
-                            <button class="btn-copy" data-target="daviplata-number">Copiar</button>
+                            <button class="btn-copy" data-target="daviplata-number"><i class="fa-solid fa-copy"></i>Copiar</button>
                         </li>
                     </ul>
                 </li>
-                <li id="payment-proof-container">
-                    <p>Sube la captura de pantalla del comprobante de pago.</p>
+                <li id="fourth-step" class="payment-proof-container">
+                    <p><span class="numeration">4</span>Sube la captura de pantalla o foto del comprobante de pago.</p>
                     <input type="file" id="payment-proof" name="payment-proof" accept="image/*" form="contact-form" required>
-                    <label for="payment-proof" class="custom-payment-proof">Seleccionar archivo</label>
+                    <label for="payment-proof" class="custom-payment-proof"><i class="fa-solid fa-camera"></i>Seleccionar archivo/foto</label>
                 </li>
             </ol>
         </section>
 
-        <button id="btn-confirm-buying" type="submit" form="contact-form">Confirmar compra</button>
+        <button id="btn-confirm-buying" type="submit" form="contact-form"><i class="fa-solid fa-check"></i>Confirmar compra</button>
     </main>
 </body>

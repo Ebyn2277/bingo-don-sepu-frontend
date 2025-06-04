@@ -27,14 +27,14 @@ main {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 1.4rem;
+    gap: 3rem;
 
     background-color: #fff1;
 }
 
 button {
     width: fit-content;
-    height: 2.5rem;
+    height: 3.5rem;
 
     padding-inline: .5rem;
 
@@ -52,9 +52,7 @@ button {
 /* MAIN SECTION */
 
 #main-section {    
-    min-height: 90vh;
-    
-    margin: 3px;
+    margin: 6px 3px;
     padding: 1rem;
     padding-bottom: 2rem;
 
@@ -79,6 +77,7 @@ button {
 
 h1 {
     font-size: 1.8rem;
+    text-align: center;
 }
 
 p {
@@ -89,34 +88,32 @@ p {
 /* BUYING PROCESS SECTION */
 
 #buying-process-section {
-    margin: 3px;
+    margin: 0 .7rem;
 
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 2rem;
 
     border-radius: 0.3rem;
 
     h2 {
         text-align: center;
+        font-size: 1.8rem;
+        letter-spacing: 2px;
         text-decoration: underline;
-    }
-
-    > p {
-        margin-inline: 1rem;
     }
 
     ol {
         display: flex;
         flex-direction: column;
-        gap: 1rem;
+        gap: 2rem;
 
         > li {
             display: flex;
             flex-direction: column;
-            gap: 0.8rem;
+            gap: 1.2rem;
 
-            padding: 1rem;
+            padding: 1rem 1rem 1.5rem;
 
             background: url('src/background.png') repeat;
             border-radius: 0.3rem;
@@ -125,9 +122,44 @@ p {
 }
 
 
+.numeration {
+    padding-right: .5rem;
+
+    font-size: 2rem;
+}
+
+#first-step {
+    box-shadow: 0 0 5px #F21B42;
+    .numeration {
+        color: #F21B42;
+    }
+}
+
+#second-step {
+    box-shadow: 0 0 5px #0396A6;
+    .numeration {
+        color: #0396A6;
+    }
+}
+
+#third-step {
+    box-shadow: 0 0 5px #B3BF5A;
+    .numeration {
+        color: #B3BF5A;
+    }
+}
+
+#fourth-step {
+    box-shadow: 0 0 5px #F2B138;
+    .numeration {
+        color: #F2B138;
+    }
+}
+
+
 #quantity-controls {
     width: 100%;
-    height: 2.5rem;
+    height: 3.5rem;
     display: flex;
     justify-content: center;
 
@@ -139,7 +171,18 @@ p {
     }
 
     button {
-        width: 2.5rem;
+        width: 3.5rem;
+        height: 100%;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        color: #FFF;
+        text-align: center;
+        font-size: 1.5rem;
+
+        background-color: #F21B42AA;
     }
 }
 
@@ -147,17 +190,28 @@ p {
     max-width: 400px;
     height: 100%;
 
-    font-size: 1.5rem;
+    font-size: 2rem;
     text-align: center;
+    font-weight: 600;
+    color: #FFF;
 
     flex-grow: 1;
+
+    background-color: #FFFFFF06;
+    border: 2px solid #FFFFFF40;
 }
 
 
 #price-display {
     display: grid;
     grid-template-columns: 1fr auto;
+    align-items: center;
     gap: .5rem;
+}
+
+#total-price {
+    font-weight: 600;
+    font-size: 1.5rem;
 }
 
 
@@ -168,23 +222,30 @@ p {
     label {
         font-weight: 600;
         font-size: 1.2rem;
-        margin-bottom: .2rem;
+        margin-bottom: .8rem;
     }
 
     input {
         width: 100%;
-        height: 2.5rem;
+        height: 3.5rem;
 
         padding-inline: 0.5rem;
 
         font-size: 1.2rem;
+        color: #FFF;
 
+        background-color: #FFFFFF06;
+        border: 2px solid #FFFFFF40;
         border-radius: 0.3rem;
-        border: none;
+
+        &:focus {
+            color: #FFF;
+            background-color: #FFFFFF06;
+        }
     }
 
     #name {
-        margin-bottom: 1rem;
+        margin-bottom: 1.2rem;
     }
 }
 
@@ -202,16 +263,33 @@ p {
         grid-template-columns: repeat(2, 1fr) auto;
         align-items: center;
 
-        p:first-child {
-            margin-right: 0.5rem;
+        strong {
+            font-size: 1.2rem;
         }
 
-        
+        p {
+            text-decoration: underline;
+        }
+    }
+}
+
+.btn-copy {
+    padding-inline: 0.7rem;
+
+    color: #FFF;
+    font-weight: 600;
+    background-color: #B3BF5A;
+
+    text-shadow: 0 0 5px #3336;
+
+    i {
+        font-size: 1.5rem;
+        margin-right: 0.5rem;
     }
 }
 
 
-#payment-proof-container {
+.payment-proof-container {
     position: relative;
 }
 
@@ -225,16 +303,23 @@ p {
 
 
 .custom-payment-proof {
-    height: 2.5rem;
+    height: 3.5rem;
 
     font-size: 1.2rem;
     text-align: center;
     align-content: center;
-    color: #000;
+    color: #FFF;
+    font-weight: 600;
+    text-shadow: 0 0 5px #3336;
     cursor: pointer;
 
     border-radius: .3rem;
-    background-color: #FFF;
+    background-color: #F2B138;
+
+    i {
+        font-size: 1.5rem;
+        margin-right: 0.5rem;
+    }
 
     :hover {
         opacity: 0.8;
@@ -243,16 +328,24 @@ p {
 
 
 #btn-confirm-buying {
-    width: calc(100% - 6px - 2rem);
-    height: 2.5rem;
+    width: calc(100% - 1.4rem);
+    height: 4.5rem;
 
-    margin-inline: calc(3px + 1rem);
+    margin-inline: 0.7rem;
 
-    font-size: 1.2rem;
+    font-size: 1.5rem;
+    letter-spacing: 3px;
     font-weight: 600;
+    text-shadow: 0 0 5px #3336;
 
     color: #FFF;
     background-color: #4CAF50;
+    box-shadow: 10px 10px 5px #0003;
+
+    i {
+        font-size: 1.5rem;
+        margin-right: 0.5rem;
+    }
 
     :hover {
         opacity: 0.8;
