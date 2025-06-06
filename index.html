@@ -3,8 +3,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Compra de cartones | Bingo Don Sepu</title>
-<meta name="keywords" content="Bingo, Sepu, Don Sepu, Bingo Don Sepu, juego de bingo, participar en bingo, comprar cartones, cartones de bingo, bingo online, bingo en línea, juego de azar, entretenimiento, diversión">
-<meta name="description" content="Compra tus cartones para participar en el Bingo Don Sepu. Disfruta de un emocionante juego de bingo en línea y gana increíbles premios. ¡Únete a la diversión!">
+<meta name="keywords" content="Bingo, Sepu, Don Sepu, Bingo Don Sepu, juego de bingo, participar en bingo, comprar cartones, cartones de bingo, bingo online, bingo en línea, juego de azar, entretenimiento, persión">
+<meta name="description" content="Compra tus cartones para participar en el Bingo Don Sepu. Disfruta de un emocionante juego de bingo en línea y gana increíbles premios. ¡Únete a la persión!">
 <meta name="author" content="Don Sepu">
 <link rel="stylesheet" href="styles.css">
 <script src="script.js"></script>
@@ -12,26 +12,30 @@
 </head>
 <body>
     <main>
+        <div id="overlay" class="hidden"></div>
+
+        <!-- INFORMATION SECTION -->
         <section id="main-section">
-            <div id="logo"></div>
+            <p id="logo"></p>
 
             <h1>Compra de Combos</h1>
             <p>Para participar en el Bingo Don Sepu, debes comprar tus combos. Cada combo te da la oportunidad de ganar premios emocionantes. Asegúrate de adquirirlos antes de que comience el juego.</p>
             <p>Recuerda que los combos son limitados, así que no esperes demasiado para hacer tu compra.</p>
             <p>¡Buena suerte y que disfrutes del juego!</p>
         </section>
-        
+
+        <!-- BUYING SECTION -->
         <section id="buying-process-section">
             <h2>Proceso de Compra</h2>
             <p>Para comprar tus combos, sigue estos pasos:</p>
             <ol>
                 <li id="first-step">
                     <p><span class="numeration">1</span>Selecciona la cantidad de combos que deseas comprar (1 combo trae 6 cartones).</p>
-                    <div id="quantity-controls">
+                    <p id="quantity-controls">
                         <button id="btn-decrement"><i class="fa-solid fa-minus"></i></button>
                         <input id="input-quantity" type="number" value="1" min="1" max="2">
                         <button id="btn-increment"><i class="fa-solid fa-plus"></i></button>
-                    </div>
+                    </p>
                     <div id="price-display">
                         <p>Valor total de la compra:</p><p id="total-price" data-price="5000">$??.000</p>
                     </div>
@@ -62,12 +66,46 @@
                 </li>
                 <li id="fourth-step" class="payment-proof-container">
                     <p><span class="numeration">4</span>Sube la captura de pantalla o foto del comprobante de pago.</p>
+                    <div id="payment-proof-preview-container">
+                        <p id="payment-proof-preview-text">No se ha seleccionado ningún archivo.</p>
+                        <img id="payment-proof-preview-image" src="" alt="Vista previa del comprobante de pago" class="hidden">
+                    </div>
                     <input type="file" id="payment-proof" name="payment-proof" accept="image/*" form="contact-form" required>
                     <label for="payment-proof" class="custom-payment-proof"><i class="fa-solid fa-camera"></i>Seleccionar archivo/foto</label>
                 </li>
             </ol>
         </section>
 
-        <button id="btn-confirm-buying" type="submit" form="contact-form"><i class="fa-solid fa-check"></i>Confirmar compra</button>
+        <button id="btn-confirm-buying" type="submit" form="contact-form"><i class="fa-solid fa-cart-shopping"></i></i>Confirmar compra</button>
+
+        <!-- CONFIRMATION SECTION -->
+        <div id="confirmation-modal-container" class="hidden">
+            <section id="confirmation-modal" class="hidden">
+                <button id="btn-close-confirmation-modal"><i class="fa-solid fa-xmark"></i></button>
+                <h2>Confirmación de compra</h2>
+                <ul id="confirmation-details">
+                    <li>
+                        <p>Nombre completo:</p><p id="confirmation-name"></p>
+                    </li>
+                    <li>
+                        <p>Número de WhastApp:</p><p id="confirmation-phone"></p>
+                    </li>
+                    <li>
+                        <p>Cantidad de combos comprados:</p><p id="confirmation-quantity"></p>
+                    </li>
+                    <li>
+                        <p>Valor total de la compra:</p><p id="confirmation-total-price"></p>
+                    </li>
+                    <li>
+                        <p>Comprobante de pago:</p>
+                        <p id="confirmation-proof">
+                            <img id="proof-image" src="" alt="Comprobante de pago">
+                        </p>
+                    </li>
+                </ul>
+
+                <button id="btn-finish-buying"><i class="fa-solid fa-check"></i>Finalizar compra</button>
+            </section>
+        </div>
     </main>
 </body>

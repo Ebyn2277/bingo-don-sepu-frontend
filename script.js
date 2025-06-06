@@ -1,5 +1,7 @@
 window.onload = () => {
+    let formData = null;
     updateTotalPrice(1); // Initialize total price with 1 ticket
+    handleChangeFile(); // Initialize file input state
 
     // EVENTS  
 
@@ -32,24 +34,81 @@ window.onload = () => {
         });
     });
 
+    document.getElementById('payment-proof').addEventListener('change', event => handleChangeFile());
+
     document.getElementById('contact-form').addEventListener('submit', event => {
         event.preventDefault();
 
-        const formData = new FormData(event.target);
+        formData = new FormData(event.target);
 
-        const file = document.getElementById('payment-proof');
+        const file = document.getElementById('payment-proof').files[0];
         
         if (!validateFile(file)) return;
 
-        formData.append('payment-proof', file.files[0]);
+        formData.append('payment-proof', file);
 
         formData.append('tickets-quantity', document.getElementById('input-quantity').value);
         formData.append('timestamp', new Date().toISOString());
 
-        // TODO: Send formData to the server
+        document.getElementById('confirmation-name').textContent = formData.get('name') || 'Nombre no proporcionado';
+        document.getElementById('confirmation-phone').textContent = formData.get('phone') || 'Teléfono no proporcionado';
+        document.getElementById('confirmation-quantity').textContent = document.getElementById('input-quantity').value || '0';
+        document.getElementById('confirmation-total-price').textContent = document.getElementById('total-price').textContent || '0 COP';
+        showImage(file, 'proof-image');
 
+        window.scrollTo({
+            bottom: 0,
+            behavior: 'smooth'
+        });
+
+        document.getElementById('confirmation-modal').classList.remove('hidden');
+        document.getElementById('overlay').classList.remove('hidden');
+        document.getElementById('confirmation-modal-container').classList.remove('hidden');
+    });
+
+    document.getElementById('btn-close-confirmation-modal').addEventListener('click', () => {
+        document.getElementById('confirmation-modal').classList.add('hidden');
+        document.getElementById('overlay').classList.add('hidden');
+        formData = null; // Reset formData
+
+        setTimeout(() => {
+            document.getElementById('confirmation-modal-container').classList.add('hidden');
+        }, 300);
+    });
+
+    document.getElementById('btn-finish-buying').addEventListener('click', () => {
+        // TODO: Send formData to the server
         console.log('Form submitted:', Object.fromEntries(formData.entries()));
     });
+}
+
+function handleChangeFile() {
+    const file = document.getElementById('payment-proof').files[0];
+    const fileNameElement = document.getElementById('payment-proof-preview-text');
+
+    if (file) {
+        if (validateFile(file)) {
+            fileNameElement.textContent = file.name;
+            fileNameElement.classList.remove('hidden');
+            document.getElementById('payment-proof-preview-image').classList.remove('hidden');
+            showImage(file, 'payment-proof-preview-image');
+        } else {
+            fileNameElement.textContent = 'Archivo no válido. Por favor, sube una imagen.';
+            fileNameElement.classList.add('hidden');
+            event.target.value = '';
+        }
+    } else {
+        fileNameElement.textContent = 'No se ha seleccionado ningún archivo.';
+        fileNameElement.classList.add('hidden');
+    }
+}
+
+function showImage(file, previewElementId) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        document.getElementById(previewElementId).src = e.target.result;
+    }
+    reader.readAsDataURL(file);
 }
 
 function updateTotalPrice(updatedQuantity) {
@@ -60,14 +119,16 @@ function updateTotalPrice(updatedQuantity) {
         style: 'currency',
         currency: 'COP'
     }).format(updatedQuantity * pricePerTicket);
+
+    console.log(`Total price updated: ${totalPrice.textContent}`);
 }
 
-function validateFile(fileInput) {
-    if (fileInput.files.length === 0) {
-        return false;
+function validateFile(file) {
+    if (file.type.startsWith('image/')) {
+        return true;
     }
-    
-    return true;
+
+    return false
 }
 
 function copyToClipboard(targetId) {
