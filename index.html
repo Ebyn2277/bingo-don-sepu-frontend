@@ -42,7 +42,7 @@
                 </li>
                 <li id="second-step">
                     <p><span class="numeration">2</span>Ingresa tus datos de contacto.</p>
-                    <form id="contact-form">
+                    <form id="request-form">
                         <label for="name">Nombre y apellidos</label>
                         <input type="text" id="name" name="name" placeholder="Ana María Rodriguez" required>
                         <label for="phone">Número de WhastApp</label>
@@ -70,13 +70,13 @@
                         <p id="payment-proof-preview-text">No se ha seleccionado ningún archivo.</p>
                         <img id="payment-proof-preview-image" src="" alt="Vista previa del comprobante de pago" class="hidden">
                     </div>
-                    <input type="file" id="payment-proof" name="payment-proof" accept="image/*" form="contact-form" required>
+                    <input type="file" id="payment-proof" name="payment-proof" accept="image/*" form="request-form" required>
                     <label for="payment-proof" class="custom-payment-proof"><i class="fa-solid fa-camera"></i>Seleccionar archivo/foto</label>
                 </li>
             </ol>
         </section>
 
-        <button id="btn-confirm-buying" type="submit" form="contact-form"><i class="fa-solid fa-cart-shopping"></i></i>Confirmar compra</button>
+        <button id="btn-confirm-buying" type="submit" form="request-form"><i class="fa-solid fa-cart-shopping"></i></i>Confirmar compra</button>
 
         <!-- CONFIRMATION SECTION -->
         <div id="confirmation-modal-container" class="hidden">
