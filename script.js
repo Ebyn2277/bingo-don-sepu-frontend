@@ -116,11 +116,24 @@ window.onload = () => {
         }
         document.getElementById("request-form").reset(); // Clean contact form
         const data = await response.json();
+        // Redirect user to successful page
         localStorage.setItem("successData", JSON.stringify(data));
         window.location.href = "successful.html";
       } catch (error) {
-        console.log(error);
-        // REDIRIGIR A LA PÁGINA DE ERROR JUNTO CON LOS DATOS DE LA PETICIÓN Y LA RESPUESTA DEL SERVIDOR
+        document.getElementById("request-form").reset(); // Clean contact form
+
+        const requestData = {};
+
+        for (const [key, value] of formData.entries()) {
+          if (value instanceof File) continue;
+
+          requestData[key] = value;
+        }
+
+        // Redirect user to error page
+        localStorage.setItem("errorData", error.message);
+        localStorage.setItem("requestData", JSON.stringify(requestData));
+        window.location.href = "error.html";
       }
     });
 };
