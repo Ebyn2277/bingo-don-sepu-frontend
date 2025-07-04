@@ -141,7 +141,16 @@ window.onload = () => {
 };
 
 async function checkPageAvailability() {
+  const loadingEllipsis = document.getElementById("loading-ellipsis");
+  // Loading animation
+  let dots = "";
+  let ellipsisInterval = setInterval(() => {
+    dots = dots.length < 3 ? dots + "." : "";
+    loadingEllipsis.textContent = dots;
+  }, 500);
+
   try {
+    await new Promise((resolve) => setTimeout(resolve, 10000));
     const response = await fetch(
       "http://192.168.20.27:8000/api/payment-gateway-status",
       {
@@ -164,6 +173,8 @@ async function checkPageAvailability() {
     console.error(error);
     document.getElementById("error-message").classList.remove("hidden");
   } finally {
+    clearInterval(ellipsisInterval);
+    loadingEllipsis.textContent = "";
     document.getElementById("loading-message").classList.add("hidden");
   }
 }

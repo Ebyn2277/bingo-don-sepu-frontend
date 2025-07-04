@@ -76,13 +76,17 @@ body > div.hidden,
 
 #loading-message,
 #error-message {
-  margin-top: 0;
-  margin-bottom: 0;
   margin: auto;
   padding: 1rem;
 
+  position: relative;
+
   align-content: center;
   font-size: 1.5rem;
+
+  span {
+    position: absolute;
+  }
 }
 
 /* MAIN SECTION */
