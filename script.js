@@ -150,7 +150,6 @@ async function checkPageAvailability() {
   }, 500);
 
   try {
-    await new Promise((resolve) => setTimeout(resolve, 10000));
     const response = await fetch(
       "http://192.168.20.27:8000/api/payment-gateway-status",
       {
