@@ -21,7 +21,7 @@ body {
   background: url("src/background.png") repeat;
 }
 
-main {
+#main-content {
   max-width: 500px;
 
   padding-bottom: 2rem;
@@ -67,6 +67,22 @@ button {
 
 #overlay.hidden {
   display: none;
+}
+
+body > div.hidden,
+#main-content.hidden {
+  display: none;
+}
+
+#loading-message,
+#error-message {
+  margin-top: 0;
+  margin-bottom: 0;
+  margin: auto;
+  padding: 1rem;
+
+  align-content: center;
+  font-size: 1.5rem;
 }
 
 /* MAIN SECTION */

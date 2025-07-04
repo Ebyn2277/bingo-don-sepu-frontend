@@ -1,4 +1,6 @@
 window.onload = () => {
+  checkPageAvailability();
+
   let formData = null;
   updateTotalPrice(1); // Initialize total price with 1 ticket
   handleChangeFile(); // Initialize file input state
@@ -103,7 +105,7 @@ window.onload = () => {
     .getElementById("btn-finish-buying")
     .addEventListener("click", async () => {
       try {
-        const response = await fetch("http://localhost:8000/api/orders", {
+        const response = await fetch("http://192.168.20.27:8000/api/orders", {
           method: "POST",
           headers: {
             Accept: "application-json",
@@ -137,6 +139,34 @@ window.onload = () => {
       }
     });
 };
+
+async function checkPageAvailability() {
+  try {
+    const response = await fetch(
+      "http://192.168.20.27:8000/api/payment-gateway-status",
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      }
+    );
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(JSON.stringify(errorData));
+    }
+
+    const data = await response.json();
+    console.info(data.message);
+    document.getElementById("main-content").classList.remove("hidden");
+  } catch (error) {
+    console.error(error);
+    document.getElementById("error-message").classList.remove("hidden");
+  } finally {
+    document.getElementById("loading-message").classList.add("hidden");
+  }
+}
 
 function handleChangeFile() {
   const file = document.getElementById("payment-proof").files[0];
