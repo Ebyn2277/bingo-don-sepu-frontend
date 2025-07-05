@@ -168,7 +168,7 @@ async function checkPageAvailability() {
     const data = await response.json();
     console.info(data.message);
 
-    // Setting page values base on payment gateway data
+    // Setting page's values base on payment gateway's data
     let paymentGateway = data.payment_gateway;
     document.getElementById("total-price").dataset.price =
       paymentGateway.ticket_price;
