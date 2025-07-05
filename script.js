@@ -1,5 +1,5 @@
-window.onload = () => {
-  checkPageAvailability();
+window.onload = async () => {
+  await checkPageAvailability();
 
   let formData = null;
   updateTotalPrice(1); // Initialize total price with 1 ticket
@@ -167,6 +167,13 @@ async function checkPageAvailability() {
 
     const data = await response.json();
     console.info(data.message);
+
+    // Setting page values base on payment gateway data
+    let paymentGateway = data.payment_gateway;
+    document.getElementById("total-price").dataset.price =
+      paymentGateway.ticket_price;
+    document.getElementById("input-quantity").max = paymentGateway.sell_limit;
+
     document.getElementById("main-content").classList.remove("hidden");
   } catch (error) {
     console.error(error);
