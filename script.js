@@ -117,6 +117,7 @@ window.onload = async () => {
           throw new Error(JSON.stringify(errorData));
         }
         document.getElementById("request-form").reset(); // Clean contact form
+        document.getElementById("input-quantity").value = 1; // Clean input quantity
         const data = await response.json();
         // Redirect user to successful page
         localStorage.setItem("successData", JSON.stringify(data));
