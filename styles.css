@@ -17,7 +17,7 @@ body {
 
   font-size: 16px;
   font-family: "Poppins", sans-serif;
-  color: #fff;
+  color: #aaa;
   background: url("src/background.png") repeat;
 }
 
@@ -232,7 +232,7 @@ p {
   font-size: 2rem;
   text-align: center;
   font-weight: 600;
-  color: #fff;
+  color: #aaa;
 
   flex-grow: 1;
 
@@ -276,7 +276,7 @@ p {
     border-radius: 0.3rem;
 
     &:focus {
-      color: #fff;
+      color: #aaa;
       background-color: #ffffff06;
     }
   }
@@ -491,7 +491,7 @@ p {
   align-items: center;
 
   font-size: 1.5rem;
-  color: #fff;
+  color: #aaa;
 
   background-color: transparent;
 
@@ -545,7 +545,7 @@ p {
     }
 
     &:nth-child(even) {
-      color: #fff;
+      color: #aaa;
       text-align: end;
       text-wrap: nowrap;
     }
