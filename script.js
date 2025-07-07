@@ -124,6 +124,7 @@ window.onload = async () => {
         window.location.href = "successful.html";
       } catch (error) {
         document.getElementById("request-form").reset(); // Clean contact form
+        document.getElementById("input-quantity").value = 1; // Clean input quantity
 
         const requestData = {};
 

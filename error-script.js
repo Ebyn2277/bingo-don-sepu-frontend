@@ -4,14 +4,19 @@ window.onload = () => {
 
   console.log(JSON.stringify(requestData));
   let errorMessage = null;
-  if (
-    "error" in errorData &&
-    errorData.error.includes("The total ticket_count exceeds the sell limit")
-  ) {
-    errorMessage = {
-      error: "Ya ha alcanzado el límite de compra del próximo juego.",
-    };
-  } else {
+  try {
+    if (
+      "error" in errorData &&
+      errorData.error.includes("The total ticket_count exceeds the sell limit")
+    ) {
+      errorMessage = {
+        error: "Ya ha alcanzado el límite de compra del próximo juego.",
+      };
+    } else {
+      errorMessage = errorData;
+    }
+  } catch (error) {
+    console.error(error);
     errorMessage = errorData;
   }
 
