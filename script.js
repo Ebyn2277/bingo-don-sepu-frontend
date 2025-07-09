@@ -2,7 +2,7 @@ window.onload = async () => {
   await checkPageAvailability();
 
   let formData = null;
-  updateTotalPrice(1); // Initialize total price with 1 ticket
+  updateTotalPrice(1); // Initialize total price with 1 sheet
   handleChangeFile(); // Initialize file input state
 
   // EVENTS
@@ -54,14 +54,14 @@ window.onload = async () => {
 
       formData = new FormData(event.target);
 
-      const tickets_count =
+      const sheets_count =
         document.getElementById("input-quantity").value || "0";
       const user_name = formData.get("name") || "Nombre no proporcionado";
       const user_whatsapp =
         formData.get("phone") || "Teléfono no proporcionado";
 
       formData.append("payment_proof", file);
-      formData.append("ticket_count", tickets_count);
+      formData.append("sheet_count", sheets_count);
       formData.append("user_name", user_name);
       formData.append("user_whatsapp", user_whatsapp);
 
@@ -69,7 +69,7 @@ window.onload = async () => {
       document.getElementById("confirmation-name").textContent = user_name;
       document.getElementById("confirmation-phone").textContent = user_whatsapp;
       document.getElementById("confirmation-quantity").textContent =
-        tickets_count;
+        sheets_count;
       document.getElementById("confirmation-total-price").textContent =
         document.getElementById("total-price").textContent || "0 COP";
       showImage(file, "proof-image");
@@ -173,7 +173,7 @@ async function checkPageAvailability() {
     // Setting page's values base on payment gateway's data
     let paymentGateway = data.payment_gateway;
     document.getElementById("total-price").dataset.price =
-      paymentGateway.ticket_price;
+      paymentGateway.sheet_price;
     document.getElementById("input-quantity").max = paymentGateway.sell_limit;
 
     document.getElementById("main-content").classList.remove("hidden");
@@ -221,12 +221,12 @@ function showImage(file, previewElementId) {
 
 function updateTotalPrice(updatedQuantity) {
   const totalPrice = document.getElementById("total-price");
-  const pricePerTicket = parseFloat(totalPrice.dataset.price);
+  const pricePerSheet = parseFloat(totalPrice.dataset.price);
 
   totalPrice.textContent = new Intl.NumberFormat("es-CO", {
     style: "currency",
     currency: "COP",
-  }).format(updatedQuantity * pricePerTicket);
+  }).format(updatedQuantity * pricePerSheet);
 }
 
 function validateFile(file) {

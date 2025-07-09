@@ -7,7 +7,7 @@ window.onload = () => {
   try {
     if (
       "error" in errorData &&
-      errorData.error.includes("The total ticket_count exceeds the sell limit")
+      errorData.error.includes("The total sheet_count exceeds the sell limit")
     ) {
       errorMessage = {
         error: "Ya ha alcanzado el límite de compra del próximo juego.",
