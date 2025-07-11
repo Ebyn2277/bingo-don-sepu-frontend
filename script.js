@@ -1,5 +1,10 @@
 window.onload = async () => {
-  await checkPageAvailability();
+  // await checkPageAvailability();
+
+  document.getElementById("total-price").dataset.price = 5000;
+  document.getElementById("input-quantity").max = 2;
+
+  document.getElementById("main-content").classList.remove("hidden");
 
   let formData = null;
   updateTotalPrice(1); // Initialize total price with 1 sheet
@@ -7,34 +12,17 @@ window.onload = async () => {
 
   // EVENTS
 
-  document.getElementById("btn-increment").addEventListener("click", () => {
-    const inputQuantity = document.getElementById("input-quantity");
-    let currentValue =
-      parseInt(inputQuantity.value) || inputQuantity.defaultValue;
+  document
+    .getElementById("btn-increment")
+    .addEventListener("click", handleClickIncrement);
 
-    if (currentValue < inputQuantity.max) {
-      inputQuantity.value = currentValue + 1;
-
-      updateTotalPrice(currentValue + 1);
-    }
-  });
-
-  document.getElementById("btn-decrement").addEventListener("click", () => {
-    const inputQuantity = document.getElementById("input-quantity");
-    let currentValue =
-      parseInt(inputQuantity.value) || inputQuantity.defaultValue;
-
-    if (currentValue > inputQuantity.min) {
-      inputQuantity.value = currentValue - 1;
-
-      updateTotalPrice(currentValue - 1);
-    }
-  });
+  document
+    .getElementById("btn-decrement")
+    .addEventListener("click", handleClickDecrement);
 
   document.querySelectorAll(".btn-copy").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const targetId = btn.getAttribute("data-target");
-      copyToClipboard(targetId);
+    btn.addEventListener("click", (btn) => {
+      handleClickCopy(btn);
     });
   });
 
@@ -45,100 +33,17 @@ window.onload = async () => {
   document
     .getElementById("request-form")
     .addEventListener("submit", (event) => {
-      event.preventDefault();
-
-      // Get form values and put them in a form data object
-      const file = document.getElementById("payment-proof").files[0];
-
-      if (!validateFile(file)) return;
-
-      formData = new FormData(event.target);
-
-      const sheets_count =
-        document.getElementById("input-quantity").value || "0";
-      const user_name = formData.get("name") || "Nombre no proporcionado";
-      const user_whatsapp =
-        formData.get("phone") || "Teléfono no proporcionado";
-
-      formData.append("payment_proof", file);
-      formData.append("sheet_count", sheets_count);
-      formData.append("user_name", user_name);
-      formData.append("user_whatsapp", user_whatsapp);
-
-      // Add de values to the confirmation modal
-      document.getElementById("confirmation-name").textContent = user_name;
-      document.getElementById("confirmation-phone").textContent = user_whatsapp;
-      document.getElementById("confirmation-quantity").textContent =
-        sheets_count;
-      document.getElementById("confirmation-total-price").textContent =
-        document.getElementById("total-price").textContent || "0 COP";
-      showImage(file, "proof-image");
-
-      // Set confirmation modal
-      window.scrollTo({
-        bottom: 0,
-        behavior: "smooth",
-      });
-
-      document.getElementById("confirmation-modal").classList.remove("hidden");
-      document.getElementById("overlay").classList.remove("hidden");
-      document
-        .getElementById("confirmation-modal-container")
-        .classList.remove("hidden");
+      handleSubmitRequestForm(event);
     });
 
   document
     .getElementById("btn-close-confirmation-modal")
-    .addEventListener("click", () => {
-      document.getElementById("confirmation-modal").classList.add("hidden");
-      document.getElementById("overlay").classList.add("hidden");
-      formData = null; // Reset formData
-
-      setTimeout(() => {
-        document
-          .getElementById("confirmation-modal-container")
-          .classList.add("hidden");
-      }, 300);
-    });
+    .addEventListener("click", handleClickCloseConfirmationModal);
 
   document
     .getElementById("btn-finish-buying")
     .addEventListener("click", async () => {
-      try {
-        const response = await fetch("http://192.168.20.27:8000/api/orders", {
-          method: "POST",
-          headers: {
-            Accept: "application-json",
-          },
-          body: formData,
-        });
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(JSON.stringify(errorData));
-        }
-        document.getElementById("request-form").reset(); // Clean contact form
-        document.getElementById("input-quantity").value = 1; // Clean input quantity
-        const data = await response.json();
-        // Redirect user to successful page
-        localStorage.setItem("successData", JSON.stringify(data));
-        window.location.href = "successful.html";
-      } catch (error) {
-        document.getElementById("request-form").reset(); // Clean contact form
-        document.getElementById("input-quantity").value = 1; // Clean input quantity
-
-        const requestData = {};
-
-        for (const [key, value] of formData.entries()) {
-          if (value instanceof File) continue;
-
-          requestData[key] = value;
-        }
-
-        // Redirect user to error page
-        localStorage.setItem("errorData", error.message);
-        localStorage.setItem("requestData", JSON.stringify(requestData));
-        window.location.href = "error.html";
-      }
+      await handleClickFinishBuying();
     });
 };
 
@@ -251,5 +156,124 @@ function copyToClipboard(targetId) {
       });
   } else {
     console.error("Target element not found");
+  }
+}
+
+function handleClickCloseConfirmationModal() {
+  document.getElementById("confirmation-modal").classList.add("hidden");
+  document.getElementById("overlay").classList.add("hidden");
+  formData = null; // Reset formData
+
+  setTimeout(() => {
+    document
+      .getElementById("confirmation-modal-container")
+      .classList.add("hidden");
+  }, 300);
+}
+
+async function handleClickFinishBuying() {
+  try {
+    const response = await fetch("http://192.168.20.27:8000/api/orders", {
+      method: "POST",
+      headers: {
+        Accept: "application-json",
+      },
+      body: formData,
+    });
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(JSON.stringify(errorData));
+    }
+    document.getElementById("request-form").reset(); // Clean contact form
+    document.getElementById("input-quantity").value = 1; // Clean input quantity
+    const data = await response.json();
+    // Redirect user to successful page
+    localStorage.setItem("successData", JSON.stringify(data));
+    window.location.href = "successful.html";
+  } catch (error) {
+    document.getElementById("request-form").reset(); // Clean contact form
+    document.getElementById("input-quantity").value = 1; // Clean input quantity
+
+    const requestData = {};
+
+    for (const [key, value] of formData.entries()) {
+      if (value instanceof File) continue;
+
+      requestData[key] = value;
+    }
+
+    // Redirect user to error page
+    localStorage.setItem("errorData", error.message);
+    localStorage.setItem("requestData", JSON.stringify(requestData));
+    window.location.href = "error.html";
+  }
+}
+
+function handleSubmitRequestForm(event) {
+  event.preventDefault();
+
+  // Get form values and put them in a form data object
+  const file = document.getElementById("payment-proof").files[0];
+
+  if (!validateFile(file)) return;
+
+  formData = new FormData(event.target);
+
+  const sheets_count = document.getElementById("input-quantity").value || "0";
+  const user_name = formData.get("name") || "Nombre no proporcionado";
+  const user_whatsapp = formData.get("phone") || "Teléfono no proporcionado";
+
+  formData.append("payment_proof", file);
+  formData.append("sheet_count", sheets_count);
+  formData.append("user_name", user_name);
+  formData.append("user_whatsapp", user_whatsapp);
+
+  // Add de values to the confirmation modal
+  document.getElementById("confirmation-name").textContent = user_name;
+  document.getElementById("confirmation-phone").textContent = user_whatsapp;
+  document.getElementById("confirmation-quantity").textContent = sheets_count;
+  document.getElementById("confirmation-total-price").textContent =
+    document.getElementById("total-price").textContent || "0 COP";
+  showImage(file, "proof-image");
+
+  // Set confirmation modal
+  window.scrollTo({
+    bottom: 0,
+    behavior: "smooth",
+  });
+
+  document.getElementById("confirmation-modal").classList.remove("hidden");
+  document.getElementById("overlay").classList.remove("hidden");
+  document
+    .getElementById("confirmation-modal-container")
+    .classList.remove("hidden");
+}
+
+function handleClickCopy(btn) {
+  const targetId = btn.getAttribute("data-target");
+  copyToClipboard(targetId);
+}
+
+function handleClickIncrement() {
+  const inputQuantity = document.getElementById("input-quantity");
+  let currentValue =
+    parseInt(inputQuantity.value) || inputQuantity.defaultValue;
+
+  if (currentValue < inputQuantity.max) {
+    inputQuantity.value = currentValue + 1;
+
+    updateTotalPrice(currentValue + 1);
+  }
+}
+
+function handleClickDecrement() {
+  const inputQuantity = document.getElementById("input-quantity");
+  let currentValue =
+    parseInt(inputQuantity.value) || inputQuantity.defaultValue;
+
+  if (currentValue > inputQuantity.min) {
+    inputQuantity.value = currentValue - 1;
+
+    updateTotalPrice(currentValue - 1);
   }
 }
