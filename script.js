@@ -1,10 +1,8 @@
 window.onload = async () => {
-  // await checkPageAvailability();
+  await checkPageAvailability();
 
   document.getElementById("total-price").dataset.price = 5000;
   document.getElementById("input-quantity").max = 2;
-
-  toggleElementVisibility("main-content", false);
 
   let formData = null;
   updateTotalPrice(1); // Initialize total price with 1 sheet
@@ -130,7 +128,7 @@ async function checkPageAvailability() {
   } finally {
     clearInterval(ellipsisInterval);
     loadingEllipsis.textContent = "";
-    toggleElementVisibility("loading-message", false);
+    toggleElementVisibility("loading-message", true);
   }
 }
 
