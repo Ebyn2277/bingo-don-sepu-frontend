@@ -1,3 +1,7 @@
+window.APP_CONFIG = {
+  API_BASE_URL: "http://192.168.20.27:8000/api",
+};
+
 window.onload = async () => {
   await checkPageAvailability();
 
@@ -98,7 +102,7 @@ async function checkPageAvailability() {
 
   try {
     const response = await fetch(
-      "http://192.168.20.27:8000/api/payment-gateway-status",
+      `${window.APP_CONFIG.API_BASE_URL}/payment-gateway-status`,
       {
         method: "GET",
         headers: {
@@ -210,7 +214,7 @@ function handleClickCloseConfirmationModal() {
 
 async function handleClickFinishBuying() {
   try {
-    const response = await fetch("http://192.168.20.27:8000/api/orders", {
+    const response = await fetch($`${window.APP_CONFIG.API_BASE_URL}/orders`, {
       method: "POST",
       headers: {
         Accept: "application-json",
@@ -337,7 +341,7 @@ async function handleClickSearchTicket() {
 
   try {
     const response = await fetch(
-      "http://192.168.20.27:8000/api/orders/search",
+      `${window.APP_CONFIG.API_BASE_URL}/orders/search`,
       {
         method: "POST",
         headers: {
