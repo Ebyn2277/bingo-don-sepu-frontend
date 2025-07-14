@@ -380,8 +380,9 @@ async function handleClickSearchTicket() {
       const sheetsCell = document.createElement("td");
 
       order.sheets.forEach((sheet, index) => {
+        console.log(sheet);
         const sourceLink = document.createElement("a");
-        sourceLink.textContent = `Combo ${index + 1}`;
+        sourceLink.innerHTML = "<i class='fa-solid fa-file-arrow-down'></i>";
         sourceLink.href = sheet.source_url;
         sourceLink.download = `combo_${index + 1}.pdf`;
         sheetsCell.appendChild(sourceLink);
