@@ -89,14 +89,36 @@ function handleClickOpenSearchSection() {
   document.getElementById("btn-open-search-section").classList.toggle("active");
 }
 
-async function checkPageAvailability() {
-  const loadingEllipsis = document.getElementById("loading-ellipsis");
+function setLoadingAnimation(ellipsisContainerId) {
   // Loading animation
   let dots = "";
   let ellipsisInterval = setInterval(() => {
     dots = dots.length < 3 ? dots + "." : "";
-    loadingEllipsis.textContent = dots;
+    document.getElementById(ellipsisContainerId).textContent = dots;
   }, 500);
+
+  return ellipsisInterval;
+}
+
+function stopLoadingAnimation(
+  ellipsisContainerId,
+  loadingContainerId,
+  ellipsisInterval
+) {
+  clearInterval(ellipsisInterval);
+  document.getElementById(ellipsisContainerId).textContent = "";
+  toggleElementVisibility(loadingContainerId, true);
+}
+
+async function checkPageAvailability() {
+  const ellipsisInterval = setLoadingAnimation("loading-ellipsis");
+  // const loadingEllipsis = document.getElementById("loading-ellipsis");
+  // // Loading animation
+  // let dots = "";
+  // let ellipsisInterval = setInterval(() => {
+  //   dots = dots.length < 3 ? dots + "." : "";
+  //   loadingEllipsis.textContent = dots;
+  // }, 500);
 
   try {
     const response = await fetch(
@@ -128,9 +150,14 @@ async function checkPageAvailability() {
     console.error(error);
     toggleElementVisibility("error-message", false);
   } finally {
-    clearInterval(ellipsisInterval);
-    loadingEllipsis.textContent = "";
-    toggleElementVisibility("loading-message", true);
+    stopLoadingAnimation(
+      "loading-ellipsis",
+      "loading-message",
+      ellipsisInterval
+    );
+    // clearInterval(ellipsisInterval);
+    // loadingEllipsis.textContent = "";
+    // toggleElementVisibility("loading-message", true);
   }
 }
 
@@ -211,6 +238,14 @@ function handleClickCloseConfirmationModal() {
 }
 
 async function handleClickFinishBuying() {
+  // Loading message
+  toggleElementVisibility("confirmation-modal", true);
+  toggleElementVisibility("confirmation-modal-loading-message", false);
+
+  const ellipsisInterval = setLoadingAnimation(
+    "confirmation-modal-loading-ellipsis"
+  );
+
   try {
     const response = await fetch(`${window.APP_CONFIG.API_BASE_URL}/orders`, {
       method: "POST",
@@ -245,6 +280,12 @@ async function handleClickFinishBuying() {
     localStorage.setItem("errorData", error.message);
     localStorage.setItem("requestData", JSON.stringify(requestData));
     window.location.href = "error.html";
+  } finally {
+    stopLoadingAnimation(
+      "confirmation-modal-loading-ellipsis",
+      "confirmation-modal-loading-message",
+      ellipsisInterval
+    );
   }
 }
 

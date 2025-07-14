@@ -66,6 +66,7 @@ button {
 }
 
 #loading-message,
+#confirmation-modal-loading-message,
 #error-message {
   margin: auto;
   padding: 1rem;
@@ -90,7 +91,8 @@ body > div.hidden,
 #search-error-message.hidden,
 #search-results.hidden,
 #search-sheets-section.hidden,
-#buying-process-section.hidden {
+#buying-process-section.hidden,
+#confirmation-modal-loading-message.hidden {
   display: none;
 }
 
@@ -732,4 +734,21 @@ p {
     font-size: 1.8rem;
     margin-right: 0.5rem;
   }
+}
+
+#confirmation-modal-loading-message {
+  height: calc(100vh - 2rem);
+
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  text-align: center;
+
+  z-index: 2000;
+  box-shadow: 0 0 10px #0003;
+
+  background-image: url("./src/background.png");
+  border-radius: 1rem 1rem 0 0;
 }
