@@ -2,13 +2,11 @@ window.APP_CONFIG = {
   API_BASE_URL: "http://192.168.20.27:8000/api",
 };
 
-window.onload = async () => {
+let formData = null;
+
+document.addEventListener("DOMContentLoaded", async () => {
   await checkPageAvailability();
 
-  document.getElementById("total-price").dataset.price = 5000;
-  document.getElementById("input-quantity").max = 2;
-
-  let formData = null;
   updateTotalPrice(1); // Initialize total price with 1 sheet
   handleChangeFile(); // Initialize file input state
 
@@ -23,7 +21,7 @@ window.onload = async () => {
     .addEventListener("click", handleClickDecrement);
 
   document.querySelectorAll(".btn-copy").forEach((btn) => {
-    btn.addEventListener("click", (btn) => {
+    btn.addEventListener("click", () => {
       handleClickCopy(btn);
     });
   });
@@ -59,7 +57,7 @@ window.onload = async () => {
   document
     .getElementById("btn-open-search-section")
     .addEventListener("click", handleClickOpenSearchSection);
-};
+});
 
 function handleClickOpenBuyingSection() {
   if (
@@ -214,7 +212,7 @@ function handleClickCloseConfirmationModal() {
 
 async function handleClickFinishBuying() {
   try {
-    const response = await fetch($`${window.APP_CONFIG.API_BASE_URL}/orders`, {
+    const response = await fetch(`${window.APP_CONFIG.API_BASE_URL}/orders`, {
       method: "POST",
       headers: {
         Accept: "application-json",
@@ -288,8 +286,8 @@ function handleSubmitRequestForm(event) {
   toggleElementVisibility("confirmation-modal-container", false);
 }
 
-function handleClickCopy(btn) {
-  const targetId = btn.getAttribute("data-target");
+function handleClickCopy(btnElement) {
+  const targetId = btnElement.getAttribute("data-target");
   copyToClipboard(targetId);
 }
 
@@ -321,8 +319,6 @@ function toggleElementVisibility(id, shouldBeHidden) {
   const element = document.getElementById(id);
   if (element) {
     element.classList.toggle("hidden", shouldBeHidden);
-  } else {
-    alert(`${id} doesn't exist.`);
   }
 }
 
@@ -382,9 +378,10 @@ async function handleClickSearchTicket() {
       const sheetsCell = document.createElement("td");
 
       order.sheets.forEach((sheet, index) => {
-        console.log(sheet);
         const sourceLink = document.createElement("a");
-        sourceLink.innerHTML = "<i class='fa-solid fa-file-arrow-down'></i>";
+        sourceLink.innerHTML = `<i class="fa-solid fa-file-arrow-down"></i> Combo ${
+          index + 1
+        }`;
         sourceLink.href = sheet.source_url;
         sourceLink.download = `combo_${index + 1}.pdf`;
         sheetsCell.appendChild(sourceLink);
