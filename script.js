@@ -49,7 +49,45 @@ window.onload = async () => {
   document.getElementById("btn-search").addEventListener("click", async () => {
     await handleClickSearchTicket();
   });
+
+  document
+    .getElementById("btn-open-buying-section")
+    .addEventListener("click", handleClickOpenBuyingSection);
+
+  document
+    .getElementById("btn-open-search-section")
+    .addEventListener("click", handleClickOpenSearchSection);
 };
+
+function handleClickOpenBuyingSection() {
+  if (
+    !document
+      .getElementById("buying-process-section")
+      .classList.contains("hidden")
+  )
+    return;
+
+  toggleElementVisibility("buying-process-section", false);
+  toggleElementVisibility("search-sheets-section", true);
+
+  document.getElementById("btn-open-buying-section").classList.toggle("active");
+  document.getElementById("btn-open-search-section").classList.toggle("active");
+}
+
+function handleClickOpenSearchSection() {
+  if (
+    !document
+      .getElementById("search-sheets-section")
+      .classList.contains("hidden")
+  )
+    return;
+
+  toggleElementVisibility("buying-process-section", true);
+  toggleElementVisibility("search-sheets-section", false);
+
+  document.getElementById("btn-open-buying-section").classList.toggle("active");
+  document.getElementById("btn-open-search-section").classList.toggle("active");
+}
 
 async function checkPageAvailability() {
   const loadingEllipsis = document.getElementById("loading-ellipsis");

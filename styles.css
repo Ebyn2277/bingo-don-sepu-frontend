@@ -24,7 +24,7 @@ body {
 #main-content {
   max-width: 500px;
 
-  padding-bottom: 2rem;
+  padding-bottom: 1rem;
 
   display: flex;
   flex-direction: column;
@@ -88,7 +88,9 @@ body > div.hidden,
 #table-orders-results.hidden,
 #no-results-message.hidden,
 #search-error-message.hidden,
-#search-results.hidden {
+#search-results.hidden,
+#search-sheets-section.hidden,
+#buying-process-section.hidden {
   display: none;
 }
 
@@ -129,17 +131,59 @@ p {
   font-size: 1.2rem;
 }
 
+/* ACTION SECTIONS */
+#action-sections-container {
+  padding-inline: 3px;
+}
+
+#action-menu {
+  width: 100%;
+  display: flex;
+  gap: 5px;
+
+  li {
+    list-style: none;
+    flex-grow: 1;
+  }
+
+  button {
+    height: calc(3.5rem - 5px);
+    width: 100%;
+    color: #0009;
+    text-decoration: underline;
+    letter-spacing: 1px;
+    background-color: #b3bf5a;
+    box-shadow: 0 0 10px #b3bf5a44;
+  }
+
+  button.active {
+    height: 3.5rem;
+    color: #aaa;
+    text-decoration: none;
+
+    background: none;
+    background-color: #0006;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    box-shadow: none;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
 /* SEARCH SECTION */
 #search-sheets-section,
 #buying-process-section {
-  margin: 0 0.7rem;
+  padding: 2rem 0.7rem;
 
   display: flex;
   flex-direction: column;
   gap: 2rem;
 
   border-radius: 0.3rem;
-
+  background-color: #0006;
   h2 {
     text-align: center;
     font-size: 1.8rem;
@@ -163,6 +207,14 @@ p {
       border-radius: 0.3rem;
     }
   }
+}
+
+#action-sections-container > #buying-process-section {
+  border-top-left-radius: 0px;
+}
+
+#action-sections-container > #search-sheets-section {
+  border-top-right-radius: 0px;
 }
 
 .numeration {

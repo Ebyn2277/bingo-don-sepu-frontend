@@ -49,169 +49,183 @@
       <p>¡Buena suerte y que disfrutes del juego!</p>
     </section>
 
-    <!-- SEARCH SECTION -->
-    <section id="search-sheets-section">
-      <h2>Búsqueda</h2>
-      <p>
-        Para buscar tus cartones comprados para el juego actual, sigue estos
-        pasos:
-      </p>
-      <ol>
-        <li id="search-first-step">
-          <p>
-            <span class="numeration">1</span>Ingresa el número de WhatsApp
-            digitado al realizar el proceso de compra y preciona el botón
-            "Buscar".
-          </p>
-          <input
-            id="search-input"
-            type="tel"
-            placeholder="3001234567"
-            pattern="[0-9]{10}"
-          />
-          <button id="btn-search" type="button">
-            <i class="fa-solid fa-magnifying-glass"></i>Buscar
-          </button>
+    <div id="action-sections-container">
+      <ul id="action-menu">
+        <li>
+          <button id="btn-open-buying-section" class="active">Comprar</button>
         </li>
-        <li id="search-second-step">
-          <p>
-            <span class="numeration">2</span>Revisa los resultados de la
-            busqueda.
-          </p>
-          <div id="search-results" class="hidden">
-            <table id="table-orders-results" class="hidden">
-              <thead>
-                <th>Fecha</th>
-                <th>Descargar Combos</th>
-              </thead>
-              <tbody id="table-orders-body"></tbody>
-            </table>
-            <p id="no-results-message" class="hidden">
-              No se ha encontrado cartones comprados registrados con el número
-              ingresado para el presente juego.
+        <li>
+          <button id="btn-open-search-section">Buscar</button>
+        </li>
+      </ul>
+      <!-- SEARCH SECTION -->
+      <section id="search-sheets-section" class="hidden">
+        <h2>Búsqueda</h2>
+        <p>
+          Para buscar tus cartones comprados para el juego actual, sigue estos
+          pasos:
+        </p>
+        <ol>
+          <li id="search-first-step">
+            <p>
+              <span class="numeration">1</span>Ingresa el número de WhatsApp
+              digitado al realizar el proceso de compra y preciona el botón
+              "Buscar".
             </p>
-            <p id="search-error-message" class="hidden">
-              Hubo un error al realizar la búsqueda.
-            </p>
-          </div>
-        </li>
-        <li id="search-third-step">
-          <p>
-            <span class="numeration">3</span>En caso de no haber encontrado los
-            resultados esperados revise el número ingresado e intentelo de
-            nuevo.
-          </p>
-        </li>
-      </ol>
-    </section>
-
-    <!-- BUYING SECTION -->
-    <section id="buying-process-section">
-      <h2>Proceso de Compra</h2>
-      <p>Para comprar tus combos, sigue estos pasos:</p>
-      <ol>
-        <li id="buying-first-step">
-          <p>
-            <span class="numeration">1</span>Selecciona la cantidad de combos
-            que deseas comprar (1 combo trae 6 cartones).
-          </p>
-          <p id="quantity-controls">
-            <button id="btn-decrement">
-              <i class="fa-solid fa-minus"></i>
-            </button>
             <input
-              id="input-quantity"
-              type="number"
-              value="1"
-              min="1"
-              max="2"
-            />
-            <button id="btn-increment"><i class="fa-solid fa-plus"></i></button>
-          </p>
-          <div id="price-display">
-            <p>Valor total de la compra:</p>
-            <p id="total-price" data-price="5000">$??.000</p>
-          </div>
-        </li>
-        <li id="buying-second-step">
-          <p><span class="numeration">2</span>Ingresa tus datos de contacto.</p>
-          <form id="request-form">
-            <label for="name">Nombre y apellidos</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              placeholder="Ana María Rodriguez"
-              required
-            />
-            <label for="phone">Número de WhastApp</label>
-            <input
+              id="search-input"
               type="tel"
-              id="phone"
-              name="phone"
-              required
               placeholder="3001234567"
               pattern="[0-9]{10}"
             />
-          </form>
-        </li>
-        <li id="buying-third-step">
-          <p>
-            <span class="numeration">3</span>Realiza el pago en una de las
-            siguientes opciones y toma una captura de pantalla o foto del
-            comprobante de pago.
-          </p>
-          <ul id="payment-options">
-            <li>
-              <strong>Nequi:</strong>
-              <p id="nequi-number">3123456789</p>
-              <button class="btn-copy" data-target="nequi-number">
-                <i class="fa-solid fa-copy"></i>Copiar
-              </button>
-            </li>
-            <li>
-              <strong>Daviplata:</strong>
-              <p id="daviplata-number">3123456789</p>
-              <button class="btn-copy" data-target="daviplata-number">
-                <i class="fa-solid fa-copy"></i>Copiar
-              </button>
-            </li>
-          </ul>
-        </li>
-        <li id="buying-fourth-step" class="payment-proof-container">
-          <p>
-            <span class="numeration">4</span>Sube la captura de pantalla o foto
-            del comprobante de pago.
-          </p>
-          <div id="payment-proof-preview-container">
-            <p id="payment-proof-preview-text">
-              No se ha seleccionado ningún archivo.
+            <button id="btn-search" type="button">
+              <i class="fa-solid fa-magnifying-glass"></i>Buscar
+            </button>
+          </li>
+          <li id="search-second-step">
+            <p>
+              <span class="numeration">2</span>Revisa los resultados de la
+              busqueda.
             </p>
-            <img
-              id="payment-proof-preview-image"
-              src=""
-              alt="Vista previa del comprobante de pago"
-              class="hidden"
-            />
-          </div>
-          <input
-            type="file"
-            id="payment-proof"
-            name="payment-proof"
-            accept="image/*"
-            form="request-form"
-            required
-          />
-          <label for="payment-proof" class="custom-payment-proof"
-            ><i class="fa-solid fa-camera"></i>Seleccionar archivo/foto</label
-          >
-        </li>
-      </ol>
-    </section>
+            <div id="search-results" class="hidden">
+              <table id="table-orders-results" class="hidden">
+                <thead>
+                  <th>Fecha</th>
+                  <th>Descargar Combos</th>
+                </thead>
+                <tbody id="table-orders-body"></tbody>
+              </table>
+              <p id="no-results-message" class="hidden">
+                No se ha encontrado cartones comprados registrados con el número
+                ingresado para el presente juego.
+              </p>
+              <p id="search-error-message" class="hidden">
+                Hubo un error al realizar la búsqueda.
+              </p>
+            </div>
+          </li>
+          <li id="search-third-step">
+            <p>
+              <span class="numeration">3</span>En caso de no haber encontrado
+              los resultados esperados revise el número ingresado e intentelo de
+              nuevo.
+            </p>
+          </li>
+        </ol>
+      </section>
 
-    <button id="btn-confirm-buying" type="submit" form="request-form">
-      <i class="fa-solid fa-cart-shopping"></i>Confirmar compra
-    </button>
+      <!-- BUYING SECTION -->
+      <section id="buying-process-section">
+        <h2>Proceso de Compra</h2>
+        <p>Para comprar tus combos, sigue estos pasos:</p>
+        <ol>
+          <li id="buying-first-step">
+            <p>
+              <span class="numeration">1</span>Selecciona la cantidad de combos
+              que deseas comprar (1 combo trae 6 cartones).
+            </p>
+            <p id="quantity-controls">
+              <button id="btn-decrement">
+                <i class="fa-solid fa-minus"></i>
+              </button>
+              <input
+                id="input-quantity"
+                type="number"
+                value="1"
+                min="1"
+                max="2"
+              />
+              <button id="btn-increment">
+                <i class="fa-solid fa-plus"></i>
+              </button>
+            </p>
+            <div id="price-display">
+              <p>Valor total de la compra:</p>
+              <p id="total-price" data-price="5000">$??.000</p>
+            </div>
+          </li>
+          <li id="buying-second-step">
+            <p>
+              <span class="numeration">2</span>Ingresa tus datos de contacto.
+            </p>
+            <form id="request-form">
+              <label for="name">Nombre y apellidos</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                placeholder="Ana María Rodriguez"
+                required
+              />
+              <label for="phone">Número de WhastApp</label>
+              <input
+                type="tel"
+                id="phone"
+                name="phone"
+                required
+                placeholder="3001234567"
+                pattern="[0-9]{10}"
+              />
+            </form>
+          </li>
+          <li id="buying-third-step">
+            <p>
+              <span class="numeration">3</span>Realiza el pago en una de las
+              siguientes opciones y toma una captura de pantalla o foto del
+              comprobante de pago.
+            </p>
+            <ul id="payment-options">
+              <li>
+                <strong>Nequi:</strong>
+                <p id="nequi-number">3123456789</p>
+                <button class="btn-copy" data-target="nequi-number">
+                  <i class="fa-solid fa-copy"></i>Copiar
+                </button>
+              </li>
+              <li>
+                <strong>Daviplata:</strong>
+                <p id="daviplata-number">3123456789</p>
+                <button class="btn-copy" data-target="daviplata-number">
+                  <i class="fa-solid fa-copy"></i>Copiar
+                </button>
+              </li>
+            </ul>
+          </li>
+          <li id="buying-fourth-step" class="payment-proof-container">
+            <p>
+              <span class="numeration">4</span>Sube la captura de pantalla o
+              foto del comprobante de pago.
+            </p>
+            <div id="payment-proof-preview-container">
+              <p id="payment-proof-preview-text">
+                No se ha seleccionado ningún archivo.
+              </p>
+              <img
+                id="payment-proof-preview-image"
+                src=""
+                alt="Vista previa del comprobante de pago"
+                class="hidden"
+              />
+            </div>
+            <input
+              type="file"
+              id="payment-proof"
+              name="payment-proof"
+              accept="image/*"
+              form="request-form"
+              required
+            />
+            <label for="payment-proof" class="custom-payment-proof"
+              ><i class="fa-solid fa-camera"></i>Seleccionar archivo/foto</label
+            >
+          </li>
+        </ol>
+
+        <button id="btn-confirm-buying" type="submit" form="request-form">
+          <i class="fa-solid fa-cart-shopping"></i>Confirmar compra
+        </button>
+      </section>
+    </div>
 
     <!-- CONFIRMATION SECTION -->
     <div id="confirmation-modal-container" class="hidden">
