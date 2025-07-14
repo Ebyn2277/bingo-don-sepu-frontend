@@ -65,15 +65,6 @@ button {
   background-color: rgba(0, 0, 0, 0.5);
 }
 
-#overlay.hidden {
-  display: none;
-}
-
-body > div.hidden,
-#main-content.hidden {
-  display: none;
-}
-
 #loading-message,
 #error-message {
   margin: auto;
@@ -87,6 +78,18 @@ body > div.hidden,
   span {
     position: absolute;
   }
+}
+
+/* HIDDEN ELEMENTS */
+body > div.hidden,
+#main-content.hidden,
+#overlay.hidden,
+#payment-proof-preview-image.hidden,
+#table-orders-results.hidden,
+#no-results-message.hidden,
+#search-error-message.hidden,
+#search-results.hidden {
+  display: none;
 }
 
 /* MAIN SECTION */
@@ -126,8 +129,8 @@ p {
   font-size: 1.2rem;
 }
 
-/* BUYING PROCESS SECTION */
-
+/* SEARCH SECTION */
+#search-tickets-section,
 #buying-process-section {
   margin: 0 0.7rem;
 
@@ -168,28 +171,135 @@ p {
   font-size: 2rem;
 }
 
-#first-step {
-  box-shadow: 0 0 5px #f21b42;
+#search-first-step {
+  box-shadow: 0 0 5px #f2b138;
   .numeration {
-    color: #f21b42;
+    color: #f2b138;
   }
 }
 
-#second-step {
-  box-shadow: 0 0 5px #0396a6;
-  .numeration {
-    color: #0396a6;
-  }
-}
-
-#third-step {
+#search-second-step {
   box-shadow: 0 0 5px #b3bf5a;
   .numeration {
     color: #b3bf5a;
   }
 }
 
-#fourth-step {
+#search-third-step {
+  box-shadow: 0 0 5px #0396a6;
+  .numeration {
+    color: #0396a6;
+  }
+}
+
+#search-input,
+#request-form > input {
+  width: 100%;
+  height: 3.5rem;
+
+  padding-inline: 0.5rem;
+
+  font-size: 1.2rem;
+  color: #fff;
+
+  background-color: #ffffff06;
+  border: 2px solid #ffffff40;
+  border-radius: 0.3rem;
+
+  &:focus {
+    color: #aaa;
+    background-color: #ffffff06;
+  }
+}
+
+#btn-search {
+  width: 100%;
+  height: 3.5rem;
+
+  font-size: 1.5rem;
+  text-align: center;
+  align-content: center;
+  color: #fff;
+  letter-spacing: 1px;
+  text-shadow: 0 0 5px #3336;
+  cursor: pointer;
+
+  border-radius: 0.3rem;
+  background-color: #f2b138;
+
+  i {
+    font-size: 1.5rem;
+    margin-right: 0.5rem;
+  }
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+#table-orders-results {
+  width: 100%;
+
+  font-size: 1.2rem;
+
+  th {
+    padding-bottom: 0.4rem;
+
+    text-align: center;
+    letter-spacing: 1px;
+  }
+
+  td {
+    padding-block: 0.4rem;
+
+    gap: 0.4rem;
+
+    text-align: center;
+
+    a {
+      padding: 0.2rem 0.4rem;
+      margin-inline: 0.4rem;
+
+      letter-spacing: 1px;
+      color: white;
+      border-radius: 4px;
+      background-color: #b3bf5a;
+
+      &:hover {
+        opacity: 0.8;
+      }
+
+      &:visited {
+        color: white;
+      }
+    }
+  }
+}
+
+/* BUYING PROCESS SECTION */
+
+#buying-first-step {
+  box-shadow: 0 0 5px #f21b42;
+  .numeration {
+    color: #f21b42;
+  }
+}
+
+#buying-second-step {
+  box-shadow: 0 0 5px #0396a6;
+  .numeration {
+    color: #0396a6;
+  }
+}
+
+#buying-third-step {
+  box-shadow: 0 0 5px #b3bf5a;
+  .numeration {
+    color: #b3bf5a;
+  }
+}
+
+#buying-fourth-step {
   box-shadow: 0 0 5px #f2b138;
   .numeration {
     color: #f2b138;
@@ -260,25 +370,6 @@ p {
     font-weight: 600;
     font-size: 1.2rem;
     margin-bottom: 0.8rem;
-  }
-
-  input {
-    width: 100%;
-    height: 3.5rem;
-
-    padding-inline: 0.5rem;
-
-    font-size: 1.2rem;
-    color: #fff;
-
-    background-color: #ffffff06;
-    border: 2px solid #ffffff40;
-    border-radius: 0.3rem;
-
-    &:focus {
-      color: #aaa;
-      background-color: #ffffff06;
-    }
   }
 
   #name {
@@ -362,10 +453,6 @@ p {
 
   border-radius: 0.3rem;
   box-shadow: 0 0 5px #0003;
-}
-
-#payment-proof-preview-image.hidden {
-  display: none;
 }
 
 .custom-payment-proof {

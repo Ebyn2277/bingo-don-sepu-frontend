@@ -4,7 +4,7 @@ window.onload = async () => {
   document.getElementById("total-price").dataset.price = 5000;
   document.getElementById("input-quantity").max = 2;
 
-  document.getElementById("main-content").classList.remove("hidden");
+  toggleElementVisibility("main-content", false);
 
   let formData = null;
   updateTotalPrice(1); // Initialize total price with 1 sheet
@@ -45,6 +45,10 @@ window.onload = async () => {
     .addEventListener("click", async () => {
       await handleClickFinishBuying();
     });
+
+  document.getElementById("btn-search").addEventListener("click", async () => {
+    await handleClickSearchTicket();
+  });
 };
 
 async function checkPageAvailability() {
@@ -81,14 +85,14 @@ async function checkPageAvailability() {
       paymentGateway.sheet_price;
     document.getElementById("input-quantity").max = paymentGateway.sell_limit;
 
-    document.getElementById("main-content").classList.remove("hidden");
+    toggleElementVisibility("main-content", false);
   } catch (error) {
     console.error(error);
-    document.getElementById("error-message").classList.remove("hidden");
+    toggleElementVisibility("error-message", false);
   } finally {
     clearInterval(ellipsisInterval);
     loadingEllipsis.textContent = "";
-    document.getElementById("loading-message").classList.add("hidden");
+    toggleElementVisibility("loading-message", false);
   }
 }
 
@@ -100,9 +104,7 @@ function handleChangeFile() {
     if (validateFile(file)) {
       fileNameElement.textContent = file.name;
       fileNameElement.classList.remove("hidden");
-      document
-        .getElementById("payment-proof-preview-image")
-        .classList.remove("hidden");
+      toggleElementVisibility("payment-proof-preview-image");
       showImage(file, "payment-proof-preview-image");
     } else {
       fileNameElement.textContent =
@@ -160,14 +162,13 @@ function copyToClipboard(targetId) {
 }
 
 function handleClickCloseConfirmationModal() {
-  document.getElementById("confirmation-modal").classList.add("hidden");
-  document.getElementById("overlay").classList.add("hidden");
+  toggleElementVisibility("confirmation-modal", true);
+  toggleElementVisibility("overlay", true);
+
   formData = null; // Reset formData
 
   setTimeout(() => {
-    document
-      .getElementById("confirmation-modal-container")
-      .classList.add("hidden");
+    toggleElementVisibility("confirmation-modal-container", true);
   }, 300);
 }
 
@@ -242,11 +243,9 @@ function handleSubmitRequestForm(event) {
     behavior: "smooth",
   });
 
-  document.getElementById("confirmation-modal").classList.remove("hidden");
-  document.getElementById("overlay").classList.remove("hidden");
-  document
-    .getElementById("confirmation-modal-container")
-    .classList.remove("hidden");
+  toggleElementVisibility("confirmation-modal", false);
+  toggleElementVisibility("overlay", false);
+  toggleElementVisibility("confirmation-modal-container", false);
 }
 
 function handleClickCopy(btn) {
@@ -275,5 +274,89 @@ function handleClickDecrement() {
     inputQuantity.value = currentValue - 1;
 
     updateTotalPrice(currentValue - 1);
+  }
+}
+
+function toggleElementVisibility(id, shouldBeHidden) {
+  const element = document.getElementById(id);
+  if (element) {
+    element.classList.toggle("hidden", shouldBeHidden);
+  } else {
+    alert(`${id} doesn't exist.`);
+  }
+}
+
+async function handleClickSearchTicket() {
+  // Resets elements' visibility
+  toggleElementVisibility("search-results", false);
+  toggleElementVisibility("table-orders-results", true);
+  toggleElementVisibility("search-error-message", true);
+  toggleElementVisibility("no-results-message", true);
+
+  const searchParam = document.getElementById("search-input").value;
+
+  if (searchParam === "") {
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      "http://192.168.20.27:8000/api/orders/search",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          user_whatsapp: searchParam,
+        }),
+      }
+    );
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(JSON.stringify(errorData));
+    }
+
+    // Adding results html
+    const data = await response.json();
+    console.info(data);
+
+    if (data.length === 0) {
+      toggleElementVisibility("no-results-message", false);
+      return;
+    }
+
+    const tableOrdersBody = document.getElementById("table-orders-body");
+    tableOrdersBody.textContent = ""; // Clear previos orders results
+
+    const ordersFragment = document.createDocumentFragment();
+
+    data.forEach((order) => {
+      const row = document.createElement("tr");
+
+      const dateCell = document.createElement("td");
+      dateCell.textContent = new Date(order.created_at).toLocaleDateString();
+      row.appendChild(dateCell);
+
+      const sheetsCell = document.createElement("td");
+
+      order.sheets.forEach((sheet, index) => {
+        const sourceLink = document.createElement("a");
+        sourceLink.textContent = `Combo ${index + 1}`;
+        sourceLink.href = sheet.source_url;
+        sourceLink.download = `combo_${index + 1}.pdf`;
+        sheetsCell.appendChild(sourceLink);
+      });
+      row.appendChild(sheetsCell);
+
+      ordersFragment.appendChild(row);
+    });
+
+    tableOrdersBody.appendChild(ordersFragment);
+    toggleElementVisibility("table-orders-results", false);
+  } catch (error) {
+    console.log(error);
+    toggleElementVisibility("search-error-message", false);
   }
 }
