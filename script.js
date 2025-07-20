@@ -1,5 +1,6 @@
 window.APP_CONFIG = {
-  API_BASE_URL: "http://192.168.20.27:8000/api",
+  API_BASE_URL:
+    "https://protestant-vinni-bingo-don-sepu-66e57ef7.koyeb.app/api",
 };
 
 let formData = null;
