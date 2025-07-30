@@ -3,7 +3,8 @@ window.APP_CONFIG = {
     "https://protestant-vinni-bingo-don-sepu-66e57ef7.koyeb.app/api",
 };
 
-let formData = null;
+let formData;
+let copyToastMessageTimeout;
 
 document.addEventListener("DOMContentLoaded", async () => {
   await checkPageAvailability();
@@ -331,6 +332,22 @@ function handleSubmitRequestForm(event) {
 function handleClickCopy(btnElement) {
   const targetId = btnElement.getAttribute("data-target");
   copyToClipboard(targetId);
+
+  // Show toast message
+  const toastElement = document.getElementById("copy-toast-message");
+
+  clearTimeout(copyToastMessageTimeout);
+
+  toastElement.classList.remove("disappering-animation");
+  void toastElement.offsetWidth;
+
+  toastElement.classList.add("disappering-animation");
+  toggleElementVisibility("copy-toast-message", false);
+
+  copyToastMessageTimeout = setTimeout(() => {
+    toggleElementVisibility("copy-toast-message", true);
+    toastElement.classList.remove("disappering-animation");
+  }, 2000);
 }
 
 function handleClickIncrement() {

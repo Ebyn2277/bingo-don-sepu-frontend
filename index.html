@@ -80,7 +80,7 @@
             <input
               id="search-input"
               type="tel"
-              placeholder="3001234567"
+              placeholder="Escriba su número de WhatsApp aquí..."
               pattern="[0-9]{10}"
             />
             <button id="btn-search" type="button">
@@ -161,7 +161,7 @@
                 type="text"
                 id="name"
                 name="name"
-                placeholder="Ana María Rodriguez"
+                placeholder="Escriba su nombre y apellidos aquí..."
                 required
               />
               <label for="phone">Número de WhastApp</label>
@@ -170,10 +170,13 @@
                 id="phone"
                 name="phone"
                 required
-                placeholder="3001234567"
+                placeholder="Escriba su número de WhatsApp aquí..."
                 pattern="[0-9]{10}"
               />
             </form>
+            <div id="copy-toast-message" class="hidden">
+              El número se ha copiado en el portapeles.
+            </div>
           </li>
           <li id="buying-third-step">
             <p>

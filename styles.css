@@ -92,7 +92,8 @@ body > div.hidden,
 #search-results.hidden,
 #search-sheets-section.hidden,
 #buying-process-section.hidden,
-#confirmation-modal-loading-message.hidden {
+#confirmation-modal-loading-message.hidden,
+#copy-toast-message.hidden {
   display: none;
 }
 
@@ -255,15 +256,58 @@ p {
   padding-inline: 0.5rem;
 
   font-size: 1.2rem;
-  color: #fff;
+  color: #aaa;
 
   background-color: #ffffff06;
   border: 2px solid #ffffff40;
   border-radius: 0.3rem;
 
   &:focus {
-    color: #aaa;
     background-color: #ffffff06;
+  }
+}
+
+#copy-toast-message {
+  width: fit-content;
+
+  padding: 0.5rem 0.8rem;
+  margin: 1rem;
+  position: fixed;
+  z-index: 10000;
+  bottom: 10vh;
+  align-self: center;
+
+  border-radius: 8px;
+  background-color: #222;
+  box-shadow: 3px 3px 5px #000a;
+}
+
+.disappering-animation {
+  animation-name: disappearing;
+  animation-duration: 2.5s;
+  animation-timing-function: linear;
+  animation-iteration-count: 1;
+}
+
+@keyframes disappearing {
+  0% {
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(5vh);
+  }
+  60% {
+    opacity: 0.5;
+  }
+
+  90% {
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(10vh);
   }
 }
 
