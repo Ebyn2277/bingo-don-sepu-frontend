@@ -1,4 +1,9 @@
 window.onload = async () => {
+  // Event listener for the back to home button
+  document.getElementById("btn-back-to-home").addEventListener("click", () => {
+    window.location.href = "index.html";
+  });
+
   const successData = JSON.parse(localStorage.getItem("successData"));
 
   // Add buttons to download PDFs
@@ -8,8 +13,8 @@ window.onload = async () => {
   const buttonsContainerFragment = document.createDocumentFragment();
   for (const [i, pdf] of successData.sheets.entries()) {
     const button = document.createElement("button");
-    button.className = "download-button";
-    button.innerHTML = `<i class="fa-solid fa-file-arrow-down"></i>Descargar Cartón ${
+    button.className = "btn-download";
+    button.innerHTML = `<i class="fa-solid fa-file-arrow-down"></i>Descargar cartón ${
       i + 1
     }`;
     button.onclick = () => downloadPDF(pdf.source_url, `combo_${i + 1}.pdf`);
