@@ -262,8 +262,8 @@ async function handleClickFinishBuying() {
     }
     document.getElementById("request-form").reset(); // Clean contact form
     document.getElementById("input-quantity").value = 1; // Clean input quantity
-    document.getElementById("table-orders-body").textContent = "";
-    document.getElementById("search-input").value = "";
+    document.getElementById("table-orders-body").textContent = ""; // Clean previous orders results
+    document.getElementById("search-input").value = ""; // Clean search input
     const data = await response.json();
     // Redirect user to successful page
     localStorage.setItem("successData", JSON.stringify(data));
@@ -271,6 +271,8 @@ async function handleClickFinishBuying() {
   } catch (error) {
     document.getElementById("request-form").reset(); // Clean contact form
     document.getElementById("input-quantity").value = 1; // Clean input quantity
+    document.getElementById("table-orders-body").textContent = ""; // Clean previous orders results
+    document.getElementById("search-input").value = ""; // Clean search input
 
     const requestData = {};
 
@@ -443,9 +445,9 @@ async function handleClickSearchSheet() {
 
       order.sheets.forEach((sheet, index) => {
         const sourceLink = document.createElement("a");
-        sourceLink.innerHTML = `<i class="fa-solid fa-file-arrow-down"></i> Combo ${
+        sourceLink.innerHTML = `<i class="fa-solid fa-file-arrow-down"></i> <span>Combo ${
           index + 1
-        }`;
+        }</span>`;
         sourceLink.href = sheet.source_url;
         sourceLink.download = `combo_${index + 1}.pdf`;
         sheetsCell.appendChild(sourceLink);

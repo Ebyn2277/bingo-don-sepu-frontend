@@ -88,6 +88,10 @@ li {
   &:hover {
     opacity: 0.8;
   }
+
+  i {
+    font-size: 2rem;
+  }
 }
 
 #btn-back-to-home {

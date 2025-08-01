@@ -157,7 +157,6 @@ p {
     text-decoration: underline;
     letter-spacing: 1px;
     background-color: #b3bf5a;
-    box-shadow: 0 0 10px #b3bf5a44;
   }
 
   button.active {
@@ -368,8 +367,9 @@ p {
     a {
       display: inline-block;
       padding: 0.4rem 0.6rem 0.2rem;
-      margin-inline: 0.4rem;
+      margin: 0.4rem;
 
+      text-decoration: none;
       letter-spacing: 1px;
       color: white;
       border-radius: 4px;
@@ -377,6 +377,10 @@ p {
 
       i {
         font-size: 2rem;
+      }
+
+      span {
+        text-decoration: underline;
       }
 
       &:hover {
