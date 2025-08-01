@@ -67,7 +67,7 @@ li {
 }
 
 .btn-download {
-  width: 80%;
+  width: 80vw;
   max-width: 400px;
   padding: 0.5rem 1.5rem;
 
@@ -95,7 +95,7 @@ li {
 }
 
 #btn-back-to-home {
-  width: 80%;
+  width: 80vw;
   max-width: 400px;
   padding: 0.5rem 1.5rem;
 
