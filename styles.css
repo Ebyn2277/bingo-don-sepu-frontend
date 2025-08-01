@@ -93,7 +93,8 @@ body > div.hidden,
 #search-sheets-section.hidden,
 #buying-process-section.hidden,
 #confirmation-modal-loading-message.hidden,
-#copy-toast-message.hidden {
+#copy-toast-message.hidden,
+#search-loading-message.hidden {
   display: none;
 }
 
@@ -238,6 +239,18 @@ p {
   box-shadow: 0 0 5px #b3bf5a;
   .numeration {
     color: #b3bf5a;
+  }
+}
+
+#search-loading-message {
+  width: 100%;
+  font-size: 1.2rem;
+
+  display: flex;
+  justify-content: center;
+
+  span {
+    width: 0;
   }
 }
 

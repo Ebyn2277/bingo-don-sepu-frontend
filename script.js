@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
   document.getElementById("btn-search").addEventListener("click", async () => {
-    await handleClickSearchTicket();
+    await handleClickSearchSheet();
   });
 
   document
@@ -262,6 +262,8 @@ async function handleClickFinishBuying() {
     }
     document.getElementById("request-form").reset(); // Clean contact form
     document.getElementById("input-quantity").value = 1; // Clean input quantity
+    document.getElementById("table-orders-body").textContent = "";
+    document.getElementById("search-input").value = "";
     const data = await response.json();
     // Redirect user to successful page
     localStorage.setItem("successData", JSON.stringify(data));
@@ -381,7 +383,7 @@ function toggleElementVisibility(id, shouldBeHidden) {
   }
 }
 
-async function handleClickSearchTicket() {
+async function handleClickSearchSheet() {
   // Resets elements' visibility
   toggleElementVisibility("search-results", false);
   toggleElementVisibility("table-orders-results", true);
@@ -393,6 +395,9 @@ async function handleClickSearchTicket() {
   if (searchParam === "") {
     return;
   }
+
+  toggleElementVisibility("search-loading-message", false);
+  const ellipsisInterval = setLoadingAnimation("search-loading-ellipsis");
 
   try {
     const response = await fetch(
@@ -455,5 +460,12 @@ async function handleClickSearchTicket() {
   } catch (error) {
     console.log(error);
     toggleElementVisibility("search-error-message", false);
+  } finally {
+    stopLoadingAnimation(
+      "search-loading-ellipsis",
+      "search-loading-message",
+      ellipsisInterval
+    );
+    toggleElementVisibility("search-loading-message", true);
   }
 }
