@@ -94,7 +94,8 @@ body > div.hidden,
 #buying-process-section.hidden,
 #confirmation-modal-loading-message.hidden,
 #copy-toast-message.hidden,
-#search-loading-message.hidden {
+#search-loading-message.hidden,
+#sub-total.hidden {
   display: none;
 }
 
@@ -527,13 +528,28 @@ p {
 #price-display {
   display: grid;
   grid-template-columns: 1fr auto;
-  align-items: center;
+  align-items: end;
   gap: 0.5rem;
+
+  p {
+    line-height: 1;
+  }
 }
 
-#total-price {
-  font-weight: 600;
-  font-size: 1.5rem;
+#total-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+
+  p {
+    letter-spacing: 1px;
+    font-size: 1.5rem;
+  }
+}
+
+#sub-total {
+  text-decoration: line-through;
+  opacity: 0.3;
 }
 
 #request-form {

@@ -1,6 +1,7 @@
 window.APP_CONFIG = {
   API_BASE_URL:
-    "https://protestant-vinni-bingo-don-sepu-66e57ef7.koyeb.app/api",
+    //"https://protestant-vinni-bingo-don-sepu-66e57ef7.koyeb.app/api",
+    "http://localhost:8000/api",
 };
 
 let formData;
@@ -9,7 +10,7 @@ let copyToastMessageTimeout;
 document.addEventListener("DOMContentLoaded", async () => {
   await checkPageAvailability();
 
-  updateTotalPrice(1); // Initialize total price with 1 sheet
+  updateTotalAmount(1); // Initialize total price with 1 sheet
   handleChangeFile(); // Initialize file input state
 
   // EVENTS
@@ -114,13 +115,6 @@ function stopLoadingAnimation(
 
 async function checkPageAvailability() {
   const ellipsisInterval = setLoadingAnimation("loading-ellipsis");
-  // const loadingEllipsis = document.getElementById("loading-ellipsis");
-  // // Loading animation
-  // let dots = "";
-  // let ellipsisInterval = setInterval(() => {
-  //   dots = dots.length < 3 ? dots + "." : "";
-  //   loadingEllipsis.textContent = dots;
-  // }, 500);
 
   try {
     const response = await fetch(
@@ -157,9 +151,6 @@ async function checkPageAvailability() {
       "loading-message",
       ellipsisInterval
     );
-    // clearInterval(ellipsisInterval);
-    // loadingEllipsis.textContent = "";
-    // toggleElementVisibility("loading-message", true);
   }
 }
 
@@ -193,9 +184,25 @@ function showImage(file, previewElementId) {
   reader.readAsDataURL(file);
 }
 
-function updateTotalPrice(updatedQuantity) {
+function updateTotalAmount(updatedQuantity) {
   const totalPrice = document.getElementById("total-price");
-  const pricePerSheet = parseFloat(totalPrice.dataset.price);
+  const subTotal = document.getElementById("sub-total");
+
+  let pricePerSheet = parseFloat(totalPrice.dataset.price);
+
+  if (updatedQuantity >= 3 && updatedQuantity < 6) {
+    toggleElementVisibility("sub-total", false);
+    // 20% discount
+    pricePerSheet *= 0.8;
+    console.log(pricePerSheet, typeof pricePerSheet);
+  } else {
+    toggleElementVisibility("sub-total", true);
+  }
+
+  subTotal.textContent = new Intl.NumberFormat("es-CO", {
+    style: "currency",
+    currency: "COP",
+  }).format(updatedQuantity * parseFloat(totalPrice.dataset.price));
 
   totalPrice.textContent = new Intl.NumberFormat("es-CO", {
     style: "currency",
@@ -362,7 +369,7 @@ function handleClickIncrement() {
   if (currentValue < inputQuantity.max) {
     inputQuantity.value = currentValue + 1;
 
-    updateTotalPrice(currentValue + 1);
+    updateTotalAmount(currentValue + 1);
   }
 }
 
@@ -374,7 +381,7 @@ function handleClickDecrement() {
   if (currentValue > inputQuantity.min) {
     inputQuantity.value = currentValue - 1;
 
-    updateTotalPrice(currentValue - 1);
+    updateTotalAmount(currentValue - 1);
   }
 }
 
