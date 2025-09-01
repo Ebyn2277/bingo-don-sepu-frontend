@@ -189,10 +189,10 @@ function updateTotalAmount(updatedQuantity) {
 
   let pricePerSheet = parseFloat(totalPrice.dataset.price);
 
-  if (updatedQuantity >= 3 && updatedQuantity < 6) {
+  if (updatedQuantity > 1) {
     toggleElementVisibility("sub-total", false);
-    // 20% discount
-    pricePerSheet *= 0.8;
+    // -$500 discount
+    pricePerSheet *= 5 / 6;
     console.log(pricePerSheet, typeof pricePerSheet);
   } else {
     toggleElementVisibility("sub-total", true);
