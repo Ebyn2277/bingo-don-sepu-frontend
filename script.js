@@ -1,444 +1,401 @@
 window.APP_CONFIG = {
-  API_BASE_URL:
-    "https://protestant-vinni-bingo-don-sepu-66e57ef7.koyeb.app/api",
+  API_BASE_URL: "http://192.168.20.27:8000/api",
+  // API_BASE_URL: "https://protestant-vinni-bingo-don-sepu-66e57ef7.koyeb.app/api",
 };
 
-let formData;
-let copyToastMessageTimeout;
+// ─── Estado global ────────────────────────────────────────────────────────────
 
-document.addEventListener("DOMContentLoaded", async () => {
-  await checkPageAvailability();
+let paymentGateway = null;    // datos del gateway: precio, límite, etc.
+let allSheets = [];           // todos los cartones cargados desde la API
+let cart = [];                // cartones seleccionados por el usuario [{id, tickets, source_url}]
+let previewingSheet = null;   // cartón actualmente en el modal de vista previa
+let copyToastTimeout = null;
 
-  updateTotalAmount(1); // Initialize total price with 1 sheet
-  handleChangeFile(); // Initialize file input state
+// ─── Inicialización ───────────────────────────────────────────────────────────
 
-  // EVENTS
-
-  document
-    .getElementById("btn-increment")
-    .addEventListener("click", handleClickIncrement);
-
-  document
-    .getElementById("btn-decrement")
-    .addEventListener("click", handleClickDecrement);
-
-  document.querySelectorAll(".btn-copy").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      handleClickCopy(btn);
-    });
-  });
-
-  document
-    .getElementById("payment-proof")
-    .addEventListener("change", (event) => handleChangeFile());
-
-  document
-    .getElementById("request-form")
-    .addEventListener("submit", (event) => {
-      handleSubmitRequestForm(event);
-    });
-
-  document
-    .getElementById("btn-close-confirmation-modal")
-    .addEventListener("click", handleClickCloseConfirmationModal);
-
-  document
-    .getElementById("btn-finish-buying")
-    .addEventListener("click", async () => {
-      await handleClickFinishBuying();
-    });
-
-  document.getElementById("btn-search").addEventListener("click", async () => {
-    await handleClickSearchSheet();
-  });
-
-  document
-    .getElementById("btn-open-buying-section")
-    .addEventListener("click", handleClickOpenBuyingSection);
-
-  document
-    .getElementById("btn-open-search-section")
-    .addEventListener("click", handleClickOpenSearchSection);
+document.addEventListener("DOMContentLoaded", () => {
+  initEventListeners();
+  loadPage();
 });
 
-function handleClickOpenBuyingSection() {
-  if (
-    !document
-      .getElementById("buying-process-section")
-      .classList.contains("hidden")
-  )
-    return;
+function initEventListeners() {
+  document.getElementById("btn-open-buying-section").addEventListener("click", handleClickOpenBuyingSection);
+  document.getElementById("btn-open-search-section").addEventListener("click", handleClickOpenSearchSection);
+  document.getElementById("btn-search").addEventListener("click", handleClickSearchSheet);
+  document.getElementById("btn-clear-cart").addEventListener("click", handleClickClearCart);
+  document.getElementById("btn-confirm-buying").addEventListener("click", handleClickConfirmBuying);
+  document.getElementById("btn-close-sheet-preview").addEventListener("click", closeSheetPreviewModal);
+  document.getElementById("sheet-preview-overlay").addEventListener("click", closeSheetPreviewModal);
+  document.getElementById("btn-add-to-cart").addEventListener("click", handleClickAddToCart);
+  document.getElementById("btn-remove-from-cart").addEventListener("click", handleClickRemoveFromCart);
+  document.getElementById("btn-close-confirmation-modal").addEventListener("click", closeConfirmationModal);
+  document.getElementById("btn-finish-buying").addEventListener("click", handleClickFinishBuying);
+  document.getElementById("request-form").addEventListener("submit", (e) => e.preventDefault());
 
-  toggleElementVisibility("buying-process-section", false);
-  toggleElementVisibility("search-sheets-section", true);
-
-  document.getElementById("btn-open-buying-section").classList.toggle("active");
-  document.getElementById("btn-open-search-section").classList.toggle("active");
+  document.querySelectorAll(".btn-copy").forEach((btn) => {
+    btn.addEventListener("click", () => handleClickCopy(btn));
+  });
 }
 
-function handleClickOpenSearchSection() {
-  if (
-    !document
-      .getElementById("search-sheets-section")
-      .classList.contains("hidden")
-  )
-    return;
+// ─── Carga inicial ────────────────────────────────────────────────────────────
 
-  toggleElementVisibility("buying-process-section", true);
-  toggleElementVisibility("search-sheets-section", false);
-
-  document.getElementById("btn-open-buying-section").classList.toggle("active");
-  document.getElementById("btn-open-search-section").classList.toggle("active");
-}
-
-function setLoadingAnimation(ellipsisContainerId) {
-  // Loading animation
-  let dots = "";
-  let ellipsisInterval = setInterval(() => {
-    dots = dots.length < 3 ? dots + "." : "";
-    document.getElementById(ellipsisContainerId).textContent = dots;
-  }, 500);
-
-  return ellipsisInterval;
-}
-
-function stopLoadingAnimation(
-  ellipsisContainerId,
-  loadingContainerId,
-  ellipsisInterval
-) {
-  clearInterval(ellipsisInterval);
-  document.getElementById(ellipsisContainerId).textContent = "";
-  toggleElementVisibility(loadingContainerId, true);
-}
-
-async function checkPageAvailability() {
-  const ellipsisInterval = setLoadingAnimation("loading-ellipsis");
-
+async function loadPage() {
+  const ellipsis = setLoadingAnimation("loading-ellipsis");
   try {
-    const response = await fetch(
-      `${window.APP_CONFIG.API_BASE_URL}/payment-gateway-status`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      }
-    );
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(JSON.stringify(errorData));
-    }
-
-    const data = await response.json();
-    console.info(data.message);
-
-    // Setting page's values base on payment gateway's data
-    let paymentGateway = data.payment_gateway;
-    document.getElementById("total-price").dataset.price =
-      paymentGateway.sheet_price;
-    document.getElementById("input-quantity").max = paymentGateway.sell_limit;
-
-    toggleElementVisibility("main-content", false);
-  } catch (error) {
-    console.error(error);
-    toggleElementVisibility("error-message", false);
+    await Promise.all([loadGatewayStatus(), loadSheets()]);
+    toggleHidden("main-content", false);
+  } catch (err) {
+    console.error(err);
+    toggleHidden("error-message", false);
   } finally {
-    stopLoadingAnimation(
-      "loading-ellipsis",
-      "loading-message",
-      ellipsisInterval
-    );
+    stopLoadingAnimation("loading-ellipsis", "loading-message", ellipsis);
   }
 }
 
-function handleChangeFile() {
-  const file = document.getElementById("payment-proof").files[0];
-  const fileNameElement = document.getElementById("payment-proof-preview-text");
+async function loadGatewayStatus() {
+  const res = await fetch(`${window.APP_CONFIG.API_BASE_URL}/payment-gateway-status`, {
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+  });
+  if (!res.ok) {
+    const data = await res.json();
+    throw new Error(JSON.stringify(data));
+  }
+  const data = await res.json();
+  paymentGateway = data.payment_gateway;
 
-  if (file) {
-    if (validateFile(file)) {
-      fileNameElement.textContent = file.name;
-      fileNameElement.classList.remove("hidden");
-      toggleElementVisibility("payment-proof-preview-image");
-      showImage(file, "payment-proof-preview-image");
-    } else {
-      fileNameElement.textContent =
-        "Archivo no válido. Por favor, sube una imagen.";
-      fileNameElement.classList.add("hidden");
-      event.target.value = "";
-    }
+  // Mostrar precio y límite en cabecera
+  document.getElementById("display-price").textContent = formatCOP(paymentGateway.sheet_price);
+  document.getElementById("display-limit").textContent = paymentGateway.sell_limit;
+  document.getElementById("cart-limit").textContent = paymentGateway.sell_limit;
+  toggleHidden("game-info", false);
+}
+
+async function loadSheets() {
+  const ellipsis = setLoadingAnimation("sheets-loading-ellipsis");
+  try {
+    const res = await fetch(`${window.APP_CONFIG.API_BASE_URL}/sheets`, {
+      headers: { Accept: "application/json" },
+    });
+    if (!res.ok) throw new Error("Error al cargar cartones.");
+    allSheets = await res.json();
+    renderSheetsGrid();
+    toggleHidden("sheets-grid", false);
+  } finally {
+    stopLoadingAnimation("sheets-loading-ellipsis", "sheets-loading-message", ellipsis);
+  }
+}
+
+// ─── Grid de cartones ─────────────────────────────────────────────────────────
+
+function renderSheetsGrid() {
+  const grid = document.getElementById("sheets-grid");
+  grid.innerHTML = "";
+
+  if (!allSheets.length) {
+    grid.innerHTML = "<p class='no-sheets-message'>No hay cartones disponibles en este momento.</p>";
+    return;
+  }
+
+  const fragment = document.createDocumentFragment();
+  allSheets.forEach((sheet) => {
+    const card = buildSheetCard(sheet);
+    fragment.appendChild(card);
+  });
+  grid.appendChild(fragment);
+}
+
+function buildSheetCard(sheet) {
+  const isAvailable = sheet.status === "available";
+  const isInCart = cart.some((s) => s.id === sheet.id);
+
+  const card = document.createElement("div");
+  card.className = `sheet-card ${isAvailable ? "available" : "sold"} ${isInCart ? "in-cart" : ""}`;
+  card.dataset.sheetId = sheet.id;
+
+  const ticketNumbers = sheet.tickets?.map((t) => t.id).join(", ") || "—";
+
+  card.innerHTML = `
+    <span class="sheet-status-badge">${isInCart ? "En carrito" : isAvailable ? "Disponible" : "Vendido"}</span>
+    <p class="sheet-ticket-numbers">${ticketNumbers}</p>
+  `;
+
+  if (isAvailable || isInCart) {
+    card.addEventListener("click", () => openSheetPreviewModal(sheet));
+  }
+
+  return card;
+}
+
+function refreshSheetsGrid() {
+  // Re-render each card in place to preserve scroll position
+  document.querySelectorAll(".sheet-card").forEach((card) => {
+    const sheetId = parseInt(card.dataset.sheetId);
+    const sheet = allSheets.find((s) => s.id === sheetId);
+    if (!sheet) return;
+
+    const isAvailable = sheet.status === "available";
+    const isInCart = cart.some((s) => s.id === sheet.id);
+
+    card.className = `sheet-card ${isAvailable ? "available" : "sold"} ${isInCart ? "in-cart" : ""}`;
+    card.querySelector(".sheet-status-badge").textContent =
+      isInCart ? "En carrito" : isAvailable ? "Disponible" : "Vendido";
+  });
+}
+
+// ─── Modal vista previa de cartón ─────────────────────────────────────────────
+
+function openSheetPreviewModal(sheet) {
+  previewingSheet = sheet;
+
+  const ticketNumbers = sheet.tickets?.map((t) => t.id).join(", ") || "—";
+  document.getElementById("sheet-preview-title").textContent = `Cartón — números: ${ticketNumbers}`;
+  document.getElementById("sheet-preview-numbers").textContent = ticketNumbers;
+
+  // Carga el PDF en el iframe
+  const iframe = document.getElementById("sheet-preview-iframe");
+  iframe.src = "";
+  toggleHidden("sheet-preview-loading", false);
+  iframe.onload = () => toggleHidden("sheet-preview-loading", true);
+  iframe.src = sheet.source_url;
+
+  // Botones según estado del carrito
+  const inCart = cart.some((s) => s.id === sheet.id);
+  toggleHidden("btn-add-to-cart", inCart);
+  toggleHidden("btn-remove-from-cart", !inCart);
+
+  toggleHidden("sheet-preview-modal-container", false);
+  toggleHidden("overlay", false);
+}
+
+function closeSheetPreviewModal() {
+  document.getElementById("sheet-preview-iframe").src = "";
+  previewingSheet = null;
+  toggleHidden("sheet-preview-modal-container", true);
+  toggleHidden("overlay", true);
+}
+
+function handleClickAddToCart() {
+  if (!previewingSheet) return;
+
+  const limit = paymentGateway?.sell_limit ?? 1;
+  if (cart.length >= limit) {
+    alert(`Solo puedes seleccionar hasta ${limit} cartón(es).`);
+    return;
+  }
+
+  cart.push(previewingSheet);
+  updateCartUI();
+  refreshSheetsGrid();
+
+  // Actualizar botones del modal
+  toggleHidden("btn-add-to-cart", true);
+  toggleHidden("btn-remove-from-cart", false);
+}
+
+function handleClickRemoveFromCart() {
+  if (!previewingSheet) return;
+  cart = cart.filter((s) => s.id !== previewingSheet.id);
+  updateCartUI();
+  refreshSheetsGrid();
+
+  toggleHidden("btn-add-to-cart", false);
+  toggleHidden("btn-remove-from-cart", true);
+}
+
+function handleClickClearCart() {
+  cart = [];
+  updateCartUI();
+  refreshSheetsGrid();
+}
+
+// ─── Carrito ──────────────────────────────────────────────────────────────────
+
+function updateCartUI() {
+  const count = cart.length;
+  document.getElementById("cart-count").textContent = count;
+
+  const confirmBtn = document.getElementById("btn-confirm-buying");
+  confirmBtn.disabled = count === 0;
+
+  if (count === 0) {
+    toggleHidden("cart-summary", true);
+    toggleHidden("sub-total", true);
+    return;
+  }
+
+  toggleHidden("cart-summary", false);
+
+  // Lista de cartones en carrito
+  const cartList = document.getElementById("cart-list");
+  cartList.innerHTML = "";
+  cart.forEach((sheet) => {
+    const li = document.createElement("li");
+    const numbers = sheet.tickets?.map((t) => t.id).join(", ") || "—";
+    li.textContent = numbers;
+
+    const removeBtn = document.createElement("button");
+    removeBtn.className = "btn-remove-from-cart-inline";
+    removeBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+    removeBtn.addEventListener("click", () => {
+      cart = cart.filter((s) => s.id !== sheet.id);
+      updateCartUI();
+      refreshSheetsGrid();
+    });
+
+    li.appendChild(removeBtn);
+    cartList.appendChild(li);
+  });
+
+  // Precio
+  const price = paymentGateway?.sheet_price ?? 0;
+  const subtotal = count * price;
+  const total = count > 1 ? Math.round(subtotal * (5 / 6)) : subtotal;
+
+  const subTotalEl = document.getElementById("sub-total");
+  const totalEl = document.getElementById("total-price");
+  totalEl.dataset.price = price;
+
+  if (count > 1) {
+    subTotalEl.textContent = formatCOP(subtotal);
+    toggleHidden("sub-total", false);
   } else {
-    fileNameElement.textContent = "No se ha seleccionado ningún archivo.";
-    fileNameElement.classList.add("hidden");
+    toggleHidden("sub-total", true);
   }
+  totalEl.textContent = formatCOP(total);
 }
 
-function showImage(file, previewElementId) {
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    document.getElementById(previewElementId).src = e.target.result;
-  };
-  reader.readAsDataURL(file);
+// ─── Confirmación de compra ───────────────────────────────────────────────────
+
+function handleClickConfirmBuying(e) {
+  e.preventDefault();
+
+  const name = document.getElementById("name").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+
+  if (!name) { alert("Por favor ingresa tu nombre."); return; }
+  if (!/^\d{10}$/.test(phone)) { alert("Por favor ingresa un número de WhatsApp de 10 dígitos."); return; }
+  if (cart.length === 0) { alert("No has seleccionado ningún cartón."); return; }
+
+  const price = paymentGateway?.sheet_price ?? 0;
+  const count = cart.length;
+  const total = count > 1 ? Math.round(count * price * (5 / 6)) : count * price;
+  const sheetNumbers = cart.map((s) => s.tickets?.map((t) => t.id).join(", ")).join(" | ");
+
+  document.getElementById("confirmation-name").textContent = name;
+  document.getElementById("confirmation-phone").textContent = phone;
+  document.getElementById("confirmation-sheets").textContent = sheetNumbers;
+  document.getElementById("confirmation-total-price").textContent = formatCOP(total);
+
+  toggleHidden("confirmation-modal-container", false);
+  toggleHidden("overlay", false);
 }
 
-function updateTotalAmount(updatedQuantity) {
-  const totalPrice = document.getElementById("total-price");
-  const subTotal = document.getElementById("sub-total");
-
-  let pricePerSheet = parseFloat(totalPrice.dataset.price);
-
-  if (updatedQuantity > 1) {
-    toggleElementVisibility("sub-total", false);
-    // -$500 discount
-    pricePerSheet *= 5 / 6;
-    console.log(pricePerSheet, typeof pricePerSheet);
-  } else {
-    toggleElementVisibility("sub-total", true);
-  }
-
-  subTotal.textContent = new Intl.NumberFormat("es-CO", {
-    style: "currency",
-    currency: "COP",
-  }).format(updatedQuantity * parseFloat(totalPrice.dataset.price));
-
-  totalPrice.textContent = new Intl.NumberFormat("es-CO", {
-    style: "currency",
-    currency: "COP",
-  }).format(updatedQuantity * pricePerSheet);
-}
-
-function validateFile(file) {
-  if (file.type.startsWith("image/")) {
-    return true;
-  }
-
-  return false;
-}
-
-function copyToClipboard(targetId) {
-  const targetElement = document.getElementById(targetId);
-  if (targetElement) {
-    const textToCopy = targetElement.textContent || targetElement.innerText;
-    navigator.clipboard
-      .writeText(textToCopy)
-      .then(() => {
-        console.log("Text copied to clipboard");
-      })
-      .catch((err) => {
-        console.error("Failed to copy text: ", err);
-      });
-  } else {
-    console.error("Target element not found");
-  }
-}
-
-function handleClickCloseConfirmationModal() {
-  toggleElementVisibility("confirmation-modal", true);
-  toggleElementVisibility("overlay", true);
-
-  formData = null; // Reset formData
-
-  setTimeout(() => {
-    toggleElementVisibility("confirmation-modal-container", true);
-  }, 300);
+function closeConfirmationModal() {
+  toggleHidden("confirmation-modal-container", true);
+  toggleHidden("overlay", true);
 }
 
 async function handleClickFinishBuying() {
-  // Loading message
-  toggleElementVisibility("confirmation-modal", true);
-  toggleElementVisibility("confirmation-modal-loading-message", false);
+  const name = document.getElementById("name").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const sheetIds = cart.map((s) => s.id);
 
-  const ellipsisInterval = setLoadingAnimation(
-    "confirmation-modal-loading-ellipsis"
-  );
+  toggleHidden("confirmation-modal-buttons", true);
+  toggleHidden("confirmation-modal-loading-message", false);
+  const ellipsis = setLoadingAnimation("confirmation-modal-loading-ellipsis");
 
   try {
-    const response = await fetch(`${window.APP_CONFIG.API_BASE_URL}/orders`, {
+    const res = await fetch(`${window.APP_CONFIG.API_BASE_URL}/orders`, {
       method: "POST",
-      headers: {
-        Accept: "application-json",
-      },
-      body: formData,
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({
+        user_name: name,
+        user_whatsapp: phone,
+        sheet_ids: sheetIds,
+      }),
     });
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(JSON.stringify(errorData));
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      // 409: ninguno disponible — informar y refrescar grid
+      if (res.status === 409) {
+        await refreshSheetsFromServer();
+        cart = [];
+        updateCartUI();
+        refreshSheetsGrid();
+        closeConfirmationModal();
+        alert(data.error || "Los cartones seleccionados ya no están disponibles. Por favor elige otros.");
+        return;
+      }
+      throw new Error(JSON.stringify(data));
     }
-    document.getElementById("request-form").reset(); // Clean contact form
-    document.getElementById("input-quantity").value = 1; // Clean input quantity
-    document.getElementById("table-orders-body").textContent = ""; // Clean previous orders results
-    document.getElementById("search-input").value = ""; // Clean search input
-    const data = await response.json();
-    // Redirect user to successful page
+
+    // Éxito — puede venir con advertencia si algunos cartones no estaban disponibles
     localStorage.setItem("successData", JSON.stringify(data));
     window.location.href = "successful.html";
-  } catch (error) {
-    document.getElementById("request-form").reset(); // Clean contact form
-    document.getElementById("input-quantity").value = 1; // Clean input quantity
-    document.getElementById("table-orders-body").textContent = ""; // Clean previous orders results
-    document.getElementById("search-input").value = ""; // Clean search input
 
-    const requestData = {};
-
-    for (const [key, value] of formData.entries()) {
-      if (value instanceof File) continue;
-
-      requestData[key] = value;
-    }
-
-    // Redirect user to error page
-    localStorage.setItem("errorData", error.message);
-    localStorage.setItem("requestData", JSON.stringify(requestData));
+  } catch (err) {
+    console.error(err);
+    localStorage.setItem("errorData", err.message);
     window.location.href = "error.html";
   } finally {
-    stopLoadingAnimation(
-      "confirmation-modal-loading-ellipsis",
-      "confirmation-modal-loading-message",
-      ellipsisInterval
-    );
+    stopLoadingAnimation("confirmation-modal-loading-ellipsis", "confirmation-modal-loading-message", ellipsis);
+    toggleHidden("confirmation-modal-buttons", false);
   }
 }
 
-function handleSubmitRequestForm(event) {
-  event.preventDefault();
-
-  // Get form values and put them in a form data object
-  const file = document.getElementById("payment-proof").files[0];
-
-  if (!validateFile(file)) return;
-
-  formData = new FormData(event.target);
-
-  const sheets_count = document.getElementById("input-quantity").value || "0";
-  const user_name = formData.get("name") || "Nombre no proporcionado";
-  const user_whatsapp = formData.get("phone") || "Teléfono no proporcionado";
-
-  formData.append("payment_proof", file);
-  formData.append("sheet_count", sheets_count);
-  formData.append("user_name", user_name);
-  formData.append("user_whatsapp", user_whatsapp);
-
-  // Add de values to the confirmation modal
-  document.getElementById("confirmation-name").textContent = user_name;
-  document.getElementById("confirmation-phone").textContent = user_whatsapp;
-  document.getElementById("confirmation-quantity").textContent = sheets_count;
-  document.getElementById("confirmation-total-price").textContent =
-    document.getElementById("total-price").textContent || "0 COP";
-  showImage(file, "proof-image");
-
-  // Set confirmation modal
-  window.scrollTo({
-    bottom: 0,
-    behavior: "smooth",
-  });
-
-  toggleElementVisibility("confirmation-modal", false);
-  toggleElementVisibility("overlay", false);
-  toggleElementVisibility("confirmation-modal-container", false);
-}
-
-function handleClickCopy(btnElement) {
-  const targetId = btnElement.getAttribute("data-target");
-  copyToClipboard(targetId);
-
-  // Show toast message
-  const toastElement = document.getElementById("copy-toast-message");
-
-  clearTimeout(copyToastMessageTimeout);
-
-  toastElement.classList.remove("disappering-animation");
-  void toastElement.offsetWidth;
-
-  toastElement.classList.add("disappering-animation");
-  toggleElementVisibility("copy-toast-message", false);
-
-  copyToastMessageTimeout = setTimeout(() => {
-    toggleElementVisibility("copy-toast-message", true);
-    toastElement.classList.remove("disappering-animation");
-  }, 2000);
-}
-
-function handleClickIncrement() {
-  const inputQuantity = document.getElementById("input-quantity");
-  let currentValue =
-    parseInt(inputQuantity.value) || inputQuantity.defaultValue;
-
-  if (currentValue < inputQuantity.max) {
-    inputQuantity.value = currentValue + 1;
-
-    updateTotalAmount(currentValue + 1);
+// Refresca el estado de los cartones desde el servidor (para detectar cambios concurrentes)
+async function refreshSheetsFromServer() {
+  try {
+    const res = await fetch(`${window.APP_CONFIG.API_BASE_URL}/sheets`, {
+      headers: { Accept: "application/json" },
+    });
+    if (res.ok) {
+      allSheets = await res.json();
+    }
+  } catch (err) {
+    console.warn("No se pudo refrescar cartones:", err);
   }
 }
 
-function handleClickDecrement() {
-  const inputQuantity = document.getElementById("input-quantity");
-  let currentValue =
-    parseInt(inputQuantity.value) || inputQuantity.defaultValue;
-
-  if (currentValue > inputQuantity.min) {
-    inputQuantity.value = currentValue - 1;
-
-    updateTotalAmount(currentValue - 1);
-  }
-}
-
-function toggleElementVisibility(id, shouldBeHidden) {
-  const element = document.getElementById(id);
-  if (element) {
-    element.classList.toggle("hidden", shouldBeHidden);
-  }
-}
+// ─── Sección de búsqueda ──────────────────────────────────────────────────────
 
 async function handleClickSearchSheet() {
-  // Resets elements' visibility
-  toggleElementVisibility("search-results", false);
-  toggleElementVisibility("table-orders-results", true);
-  toggleElementVisibility("search-error-message", true);
-  toggleElementVisibility("no-results-message", true);
+  toggleHidden("search-results", true);
+  toggleHidden("table-orders-results", true);
+  toggleHidden("search-error-message", true);
+  toggleHidden("no-results-message", true);
 
-  const searchParam = document.getElementById("search-input").value;
+  const searchParam = document.getElementById("search-input").value.trim();
+  if (!searchParam) return;
 
-  if (searchParam === "") {
-    return;
-  }
-
-  toggleElementVisibility("search-loading-message", false);
-  const ellipsisInterval = setLoadingAnimation("search-loading-ellipsis");
+  toggleHidden("search-loading-message", false);
+  const ellipsis = setLoadingAnimation("search-loading-ellipsis");
 
   try {
-    const response = await fetch(
-      `${window.APP_CONFIG.API_BASE_URL}/orders/search`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({
-          user_whatsapp: searchParam,
-        }),
-      }
-    );
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(JSON.stringify(errorData));
+    const res = await fetch(`${window.APP_CONFIG.API_BASE_URL}/orders/search`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({ user_whatsapp: searchParam }),
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(JSON.stringify(err));
     }
 
-    // Adding results html
-    const data = await response.json();
-    console.info(data);
+    const data = await res.json();
+    toggleHidden("search-results", false);
 
-    if (data.length === 0) {
-      toggleElementVisibility("no-results-message", false);
+    if (!data.length) {
+      toggleHidden("no-results-message", false);
       return;
     }
 
-    const tableOrdersBody = document.getElementById("table-orders-body");
-    tableOrdersBody.textContent = ""; // Clear previos orders results
-
-    const ordersFragment = document.createDocumentFragment();
+    const tbody = document.getElementById("table-orders-body");
+    tbody.innerHTML = "";
+    const fragment = document.createDocumentFragment();
 
     data.forEach((order) => {
       const row = document.createElement("tr");
@@ -448,32 +405,93 @@ async function handleClickSearchSheet() {
       row.appendChild(dateCell);
 
       const sheetsCell = document.createElement("td");
-
-      order.sheets.forEach((sheet, index) => {
-        const sourceLink = document.createElement("a");
-        sourceLink.innerHTML = `<i class="fa-solid fa-file-arrow-down"></i> <span>Combo ${
-          index + 1
-        }</span>`;
-        sourceLink.href = sheet.source_url;
-        sourceLink.download = `combo_${index + 1}.pdf`;
-        sheetsCell.appendChild(sourceLink);
+      order.sheets?.forEach((sheet, i) => {
+        const link = document.createElement("a");
+        link.href = sheet.source_url;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.download = `combo_${i + 1}.pdf`;
+        link.innerHTML = `<i class="fa-solid fa-file-arrow-down"></i> <span>Combo ${i + 1}</span>`;
+        sheetsCell.appendChild(link);
       });
       row.appendChild(sheetsCell);
 
-      ordersFragment.appendChild(row);
+      fragment.appendChild(row);
     });
 
-    tableOrdersBody.appendChild(ordersFragment);
-    toggleElementVisibility("table-orders-results", false);
-  } catch (error) {
-    console.log(error);
-    toggleElementVisibility("search-error-message", false);
+    tbody.appendChild(fragment);
+    toggleHidden("table-orders-results", false);
+
+  } catch (err) {
+    console.error(err);
+    toggleHidden("search-results", false);
+    toggleHidden("search-error-message", false);
   } finally {
-    stopLoadingAnimation(
-      "search-loading-ellipsis",
-      "search-loading-message",
-      ellipsisInterval
-    );
-    toggleElementVisibility("search-loading-message", true);
+    stopLoadingAnimation("search-loading-ellipsis", "search-loading-message", ellipsis);
+    toggleHidden("search-loading-message", true);
   }
+}
+
+// ─── Navegación entre pestañas ────────────────────────────────────────────────
+
+function handleClickOpenBuyingSection() {
+  if (!document.getElementById("buying-process-section").classList.contains("hidden")) return;
+  toggleHidden("buying-process-section", false);
+  toggleHidden("search-sheets-section", true);
+  document.getElementById("btn-open-buying-section").classList.add("active");
+  document.getElementById("btn-open-search-section").classList.remove("active");
+}
+
+function handleClickOpenSearchSection() {
+  if (!document.getElementById("search-sheets-section").classList.contains("hidden")) return;
+  toggleHidden("search-sheets-section", false);
+  toggleHidden("buying-process-section", true);
+  document.getElementById("btn-open-search-section").classList.add("active");
+  document.getElementById("btn-open-buying-section").classList.remove("active");
+}
+
+// ─── Copy to clipboard ────────────────────────────────────────────────────────
+
+function handleClickCopy(btn) {
+  const targetId = btn.getAttribute("data-target");
+  const text = document.getElementById(targetId)?.textContent || "";
+  navigator.clipboard.writeText(text).catch(console.error);
+
+  const toast = document.getElementById("copy-toast-message");
+  clearTimeout(copyToastTimeout);
+  toast.classList.remove("disappering-animation");
+  void toast.offsetWidth;
+  toast.classList.add("disappering-animation");
+  toggleHidden("copy-toast-message", false);
+  copyToastTimeout = setTimeout(() => {
+    toggleHidden("copy-toast-message", true);
+    toast.classList.remove("disappering-animation");
+  }, 2500);
+}
+
+// ─── Utilidades ───────────────────────────────────────────────────────────────
+
+function toggleHidden(id, shouldBeHidden) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle("hidden", shouldBeHidden);
+}
+
+function setLoadingAnimation(ellipsisId) {
+  let dots = "";
+  return setInterval(() => {
+    dots = dots.length < 3 ? dots + "." : "";
+    const el = document.getElementById(ellipsisId);
+    if (el) el.textContent = dots;
+  }, 500);
+}
+
+function stopLoadingAnimation(ellipsisId, containerId, interval) {
+  clearInterval(interval);
+  const el = document.getElementById(ellipsisId);
+  if (el) el.textContent = "";
+  toggleHidden(containerId, true);
+}
+
+function formatCOP(amount) {
+  return new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP" }).format(amount);
 }

@@ -1,47 +1,40 @@
 <!DOCTYPE html>
+<html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mensaje de confirmación | Bingo Don Sepu</title>
-  <link
-    rel="icon"
-    type="image/png"
-    href="/src/logo_bingo_v4_high_quality_favicon.png"
-  />
+  <title>Compra exitosa | Bingo Don Sepu</title>
+  <link rel="icon" type="image/png" href="/src/logo_bingo_v4_high_quality_favicon.png" />
   <meta name="author" content="Don Sepu" />
-  <script src="successful-script.js"></script>
   <link rel="stylesheet" href="successful-style.css" />
-  <script
-    src="https://kit.fontawesome.com/6a6cfa52c5.js"
-    crossorigin="anonymous"
-  ></script>
+  <script src="https://kit.fontawesome.com/6a6cfa52c5.js" crossorigin="anonymous"></script>
 </head>
 <body>
   <main>
-    <h1>Compra hecha exitosamente!</h1>
+    <h1>¡Reserva realizada!</h1>
+
+    <!-- Advertencia si hubo cartones no disponibles al momento de confirmar -->
+    <p id="warning-message" class="hidden warning"></p>
+
     <p>
-      Ahora podrá descargar los combos que ha comprado. Solo tiene que hacer
-      click en los botones de descarga que se muestran a continuación.
+      Descarga los combos que has reservado. El administrador validará tu pago
+      y confirmará la reserva. Mantente atento a los grupos de WhatsApp.
     </p>
 
     <div id="download-sheets-container"></div>
 
     <p>
-      Si no encuentra los botones de descarga, vuelva a la página de inicio,
-      busque sus combos en la sección de busqueda y descargue los archivos desde
-      allí.
+      Si no encuentras los botones de descarga, vuelve al inicio, busca tus
+      combos en la sección <strong>Buscar</strong> e intenta descargarlos desde allí.
+    </p>
+    <p>
+      Cualquier duda comunícate con el administrador por WhatsApp.
     </p>
 
-    <p>
-      Conservelos y este atento a nuestros grupos de WhastApp por
-      actualizaciónes hasta la fecha del juego.
-    </p>
-    <p>
-      Cualquier duda comuniquese por WhatsApp con el administrador de uno de
-      estos grupos.
-    </p>
     <button id="btn-back-to-home">
-      <i class="fas fa-home"></i><span>Volver al inicio</span>
+      <i class="fas fa-home"></i> <span>Volver al inicio</span>
     </button>
   </main>
+  <script src="successful-script.js"></script>
 </body>
+</html>

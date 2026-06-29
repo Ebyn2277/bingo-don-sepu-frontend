@@ -1,95 +1,72 @@
 <!DOCTYPE html>
+<html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Compra de cartones | Bingo Don Sepu</title>
-  <link
-    rel="icon"
-    type="image/png"
-    href="/src/logo_bingo_v4_high_quality_favicon.png"
-  />
-  <meta
-    name="keywords"
-    content="Bingo, Sepu, Don Sepu, Bingo Don Sepu, juego de bingo, participar en bingo, comprar cartones, cartones de bingo, bingo online, bingo en línea, juego de azar, entretenimiento, persión"
-  />
-  <meta
-    name="description"
-    content="Compra tus cartones para participar en el Bingo Don Sepu. Disfruta de un emocionante juego de bingo en línea y gana increíbles premios. ¡Únete a la persión!"
-  />
+  <link rel="icon" type="image/png" href="/src/logo_bingo_v4_high_quality_favicon.png" />
+  <meta name="keywords" content="Bingo, Sepu, Don Sepu, Bingo Don Sepu, juego de bingo, comprar cartones, bingo online" />
+  <meta name="description" content="Compra tus cartones para participar en el Bingo Don Sepu." />
   <meta name="author" content="Don Sepu" />
   <link rel="stylesheet" href="styles.css" />
-  <script src="script.js"></script>
-  <script
-    src="https://kit.fontawesome.com/6a6cfa52c5.js"
-    crossorigin="anonymous"
-  ></script>
+  <script src="https://kit.fontawesome.com/6a6cfa52c5.js" crossorigin="anonymous"></script>
 </head>
 <body>
+
+  <!-- Estado: cargando -->
   <div id="loading-message">
     Cargando página.<span id="loading-ellipsis"></span>
   </div>
 
+  <!-- Estado: error / página no disponible -->
   <div id="error-message" class="hidden">
-    Esta página no se encuentra disponible por el momento. <br />Encuentre más
-    información en nuestros grupos de WhatsApp.
+    Esta página no se encuentra disponible por el momento.<br />
+    Encuentre más información en nuestros grupos de WhatsApp.
   </div>
 
+  <!-- Contenido principal -->
   <div id="main-content" class="hidden">
+
     <div id="overlay" class="hidden"></div>
 
-    <!-- INFORMATION SECTION -->
+    <!-- Cabecera informativa -->
     <section id="main-section">
       <p id="logo"></p>
-
       <h1>Compra de Combos</h1>
-      <p>
-        Para participar en el Bingo Don Sepu, debes comprar tus combos. Cada
-        combo te da la oportunidad de ganar premios emocionantes. Asegúrate de
-        adquirirlos antes de que comience el juego.
-      </p>
-      <p>
-        Recuerda que los combos son limitados, así que no esperes demasiado para
-        hacer tu compra.
-      </p>
-      <p>¡Buena suerte y que disfrutes del juego!</p>
+      <p>Selecciona tus cartones, confirma tu compra con tu nombre y número de WhatsApp, y el administrador validará tu reserva.</p>
+      <div id="game-info" class="hidden">
+        <p>Precio por combo: <strong id="display-price">—</strong></p>
+        <p>Máximo por usuario: <strong id="display-limit">—</strong> combo(s)</p>
+      </div>
     </section>
 
+    <!-- Menú de pestañas -->
     <div id="action-sections-container">
       <div id="action-menu">
         <button id="btn-open-buying-section" class="active">
           <span>Comprar</span>
         </button>
-        <button id="btn-open-search-section"><span>Buscar</span></button>
+        <button id="btn-open-search-section">
+          <span>Buscar</span>
+        </button>
       </div>
-      <!-- SEARCH SECTION -->
+
+      <!-- ══════════════════════════════════════════
+           SECCIÓN BUSCAR
+      ══════════════════════════════════════════ -->
       <section id="search-sheets-section" class="hidden">
         <h2>Búsqueda</h2>
-        <p>
-          Para buscar tus cartones comprados para el juego actual, sigue estos
-          pasos:
-        </p>
+        <p>Ingresa el número de WhatsApp con el que realizaste tu compra para ver tus cartones.</p>
         <ol>
           <li id="search-first-step">
-            <p>
-              <span class="numeration">1</span>Ingresa el número de WhatsApp
-              digitado al realizar el proceso de compra y preciona el botón
-              "Buscar".
-            </p>
-            <input
-              id="search-input"
-              type="tel"
-              placeholder="Escriba su número de WhatsApp aquí..."
-              pattern="[0-9]{10}"
-            />
+            <p><span class="numeration">1</span>Ingresa tu número de WhatsApp y presiona "Buscar".</p>
+            <input id="search-input" type="tel" placeholder="Ej: 3001234567" pattern="[0-9]{10}" />
             <button id="btn-search" type="button">
-              <i class="fa-solid fa-magnifying-glass"></i>Buscar
+              <i class="fa-solid fa-magnifying-glass"></i> Buscar
             </button>
           </li>
           <li id="search-second-step">
-            <p>
-              <span class="numeration">2</span>Revisa los resultados de la
-              busqueda.
-            </p>
+            <p><span class="numeration">2</span>Revisa los resultados.</p>
             <div id="search-loading-message" class="hidden">
               Buscando.<span id="search-loading-ellipsis"></span>
             </div>
@@ -104,182 +81,145 @@
                 <tbody id="table-orders-body"></tbody>
               </table>
               <p id="no-results-message" class="hidden">
-                No se ha encontrado cartones comprados registrados con el número
-                ingresado para el presente juego.
+                No se encontraron cartones registrados con ese número para el juego actual.
               </p>
               <p id="search-error-message" class="hidden">
-                Hubo un error al realizar la búsqueda.
+                Hubo un error al realizar la búsqueda. Intenta de nuevo.
               </p>
             </div>
           </li>
           <li id="search-third-step">
-            <p>
-              <span class="numeration">3</span>En caso de no haber encontrado
-              los resultados esperados revise el número ingresado e intentelo de
-              nuevo.
-            </p>
+            <p><span class="numeration">3</span>Si no encuentras tus cartones, revisa el número ingresado e inténtalo de nuevo.</p>
           </li>
         </ol>
       </section>
 
-      <!-- BUYING SECTION -->
+      <!-- ══════════════════════════════════════════
+           SECCIÓN COMPRAR
+      ══════════════════════════════════════════ -->
       <section id="buying-process-section">
         <h2>Proceso de Compra</h2>
-        <p>Para comprar tus combos, sigue estos pasos:</p>
         <ol>
+
+          <!-- Paso 1: selección de cartones -->
           <li id="buying-first-step">
-            <p>
-              <span class="numeration">1</span>Selecciona la cantidad de combos
-              que deseas comprar (1 combo trae 6 cartones).
-            </p>
-            <p id="quantity-controls">
-              <button id="btn-decrement">
-                <i class="fa-solid fa-minus"></i>
-              </button>
-              <input
-                id="input-quantity"
-                type="number"
-                value="1"
-                min="1"
-                max="2"
-              />
-              <button id="btn-increment">
-                <i class="fa-solid fa-plus"></i>
-              </button>
-            </p>
-            <div id="price-display">
-              <p>Valor total de la compra:</p>
-              <div id="total-container">
-                <p id="sub-total" class="hidden">$??.000</p>
-                <p id="total-price" data-price="5000">$??.000</p>
+            <p><span class="numeration">1</span>Elige los cartones que quieres comprar. Cada combo trae 6 números.</p>
+            <p id="cart-counter">Seleccionados: <strong id="cart-count">0</strong> / <strong id="cart-limit">—</strong></p>
+
+            <div id="sheets-loading-message">
+              Cargando cartones.<span id="sheets-loading-ellipsis"></span>
+            </div>
+
+            <div id="sheets-grid" class="hidden"></div>
+
+            <div id="cart-summary" class="hidden">
+              <h3>Carrito</h3>
+              <ul id="cart-list"></ul>
+              <div id="price-display">
+                <p>Total a pagar:</p>
+                <div id="total-container">
+                  <p id="sub-total" class="hidden"></p>
+                  <p id="total-price" data-price="0">—</p>
+                </div>
               </div>
+              <button id="btn-clear-cart">Limpiar selección</button>
             </div>
           </li>
+
+          <!-- Paso 2: datos de contacto -->
           <li id="buying-second-step">
-            <p>
-              <span class="numeration">2</span>Ingresa tus datos de contacto.
-            </p>
+            <p><span class="numeration">2</span>Ingresa tus datos de contacto.</p>
             <form id="request-form">
               <label for="name">Nombre y apellidos</label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                placeholder="Escriba su nombre y apellidos aquí..."
-                required
-              />
-              <label for="phone">Número de WhastApp</label>
-              <input
-                type="tel"
-                id="phone"
-                name="phone"
-                required
-                placeholder="Escriba su número de WhatsApp aquí..."
-                pattern="[0-9]{10}"
-              />
+              <input type="text" id="name" name="name" placeholder="Tu nombre completo" required />
+              <label for="phone">Número de WhatsApp</label>
+              <input type="tel" id="phone" name="phone" placeholder="Ej: 3001234567" pattern="[0-9]{10}" required />
             </form>
-            <div id="copy-toast-message" class="hidden">
-              El número se ha copiado en el portapeles.
-            </div>
           </li>
+
+          <!-- Paso 3: instrucciones de pago (solo informativo) -->
           <li id="buying-third-step">
-            <p>
-              <span class="numeration">3</span>Realiza el pago en una de las
-              siguientes opciones y toma una captura de pantalla o foto del
-              comprobante de pago.
-            </p>
+            <p><span class="numeration">3</span>Realiza el pago y comunícate con el administrador para confirmar.</p>
             <ul id="payment-options">
               <li>
                 <strong>Nequi:</strong>
                 <p id="nequi-number">3214481047</p>
                 <button class="btn-copy" data-target="nequi-number">
-                  <i class="fa-solid fa-copy"></i>Copiar
+                  <i class="fa-solid fa-copy"></i> Copiar
                 </button>
               </li>
               <li>
                 <strong>Daviplata:</strong>
                 <p id="daviplata-number">3214481047</p>
                 <button class="btn-copy" data-target="daviplata-number">
-                  <i class="fa-solid fa-copy"></i>Copiar
+                  <i class="fa-solid fa-copy"></i> Copiar
                 </button>
               </li>
             </ul>
           </li>
-          <li id="buying-fourth-step" class="payment-proof-container">
-            <p>
-              <span class="numeration">4</span>Sube la captura de pantalla o
-              foto del comprobante de pago.
-            </p>
-            <div id="payment-proof-preview-container">
-              <p id="payment-proof-preview-text">
-                No se ha seleccionado ningún archivo.
-              </p>
-              <img
-                id="payment-proof-preview-image"
-                src=""
-                alt="Vista previa del comprobante de pago"
-                class="hidden"
-              />
-            </div>
-            <input
-              type="file"
-              id="payment-proof"
-              name="payment-proof"
-              accept="image/*"
-              form="request-form"
-              required
-            />
-            <label for="payment-proof" class="custom-payment-proof"
-              ><i class="fa-solid fa-camera"></i>Seleccionar archivo/foto</label
-            >
-          </li>
+
         </ol>
 
-        <button id="btn-confirm-buying" type="submit" form="request-form">
-          <i class="fa-solid fa-cart-shopping"></i>Confirmar compra
+        <button id="btn-confirm-buying" type="submit" form="request-form" disabled>
+          <i class="fa-solid fa-cart-shopping"></i> Confirmar compra
         </button>
       </section>
+    </div><!-- /action-sections-container -->
+
+    <div id="copy-toast-message" class="hidden">
+      El número se ha copiado en el portapapeles.
     </div>
 
-    <!-- CONFIRMATION SECTION -->
-    <div id="confirmation-modal-container" class="hidden">
-      <section id="confirmation-modal" class="hidden">
-        <button id="btn-close-confirmation-modal">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-        <h2>Confirmación de compra</h2>
-        <ul id="confirmation-details">
-          <li>
-            <p>Nombre completo:</p>
-            <p id="confirmation-name"></p>
-          </li>
-          <li>
-            <p>Número de WhastApp:</p>
-            <p id="confirmation-phone"></p>
-          </li>
-          <li>
-            <p>Cantidad de combos comprados:</p>
-            <p id="confirmation-quantity"></p>
-          </li>
-          <li>
-            <p>Valor total de la compra:</p>
-            <p id="confirmation-total-price"></p>
-          </li>
-          <li>
-            <p>Comprobante de pago:</p>
-            <p id="confirmation-proof">
-              <img id="proof-image" src="" alt="Comprobante de pago" />
-            </p>
-          </li>
-        </ul>
+  </div><!-- /main-content -->
 
-        <button id="btn-finish-buying">
-          <i class="fa-solid fa-check"></i>Finalizar compra
+  <!-- ══════════════════════════════════════════
+       MODAL: vista previa de cartón
+  ══════════════════════════════════════════ -->
+  <div id="sheet-preview-modal-container" class="hidden">
+    <div id="sheet-preview-overlay"></div>
+    <div id="sheet-preview-modal">
+      <button id="btn-close-sheet-preview"><i class="fa-solid fa-xmark"></i></button>
+      <h2 id="sheet-preview-title">Cartón</h2>
+      <div id="sheet-preview-numbers"></div>
+      <div id="sheet-preview-image-wrapper">
+        <p id="sheet-preview-loading">Cargando imagen.<span id="sheet-preview-ellipsis"></span></p>
+        <iframe id="sheet-preview-iframe" src="" title="Vista previa del cartón"></iframe>
+      </div>
+      <div id="sheet-preview-actions">
+        <button id="btn-add-to-cart" class="hidden">
+          <i class="fa-solid fa-plus"></i> Añadir al carrito
         </button>
-      </section>
-      <div id="confirmation-modal-loading-message" class="hidden">
-        Procesando orden.<span id="confirmation-modal-loading-ellipsis"></span>
+        <button id="btn-remove-from-cart" class="hidden">
+          <i class="fa-solid fa-minus"></i> Quitar del carrito
+        </button>
       </div>
     </div>
   </div>
+
+  <!-- ══════════════════════════════════════════
+       MODAL: confirmación de compra
+  ══════════════════════════════════════════ -->
+  <div id="confirmation-modal-container" class="hidden">
+    <div id="confirmation-modal">
+      <button id="btn-close-confirmation-modal"><i class="fa-solid fa-xmark"></i></button>
+      <h2>Confirmación de compra</h2>
+      <ul id="confirmation-details">
+        <li><p>Nombre:</p><p id="confirmation-name"></p></li>
+        <li><p>WhatsApp:</p><p id="confirmation-phone"></p></li>
+        <li><p>Cartones seleccionados:</p><p id="confirmation-sheets"></p></li>
+        <li><p>Total a pagar:</p><p id="confirmation-total-price"></p></li>
+      </ul>
+      <p id="confirmation-modal-loading-message" class="hidden">
+        Procesando orden.<span id="confirmation-modal-loading-ellipsis"></span>
+      </p>
+      <div id="confirmation-modal-buttons">
+        <button id="btn-finish-buying">
+          <i class="fa-solid fa-check"></i> Finalizar compra
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
+</html>

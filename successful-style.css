@@ -8,14 +8,10 @@
 
 body {
   min-height: 100vh;
-
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
-  position: relative;
-
   font-size: 16px;
   font-family: "Poppins", sans-serif;
   color: #fff;
@@ -25,59 +21,73 @@ body {
 main {
   min-height: 65vh;
   max-width: 800px;
-  margin: 4rem 4rem 8rem;
+  margin: 4rem 1rem 8rem;
   padding: 2rem;
-
   display: flex;
   flex-direction: column;
   gap: 2rem;
-
   background-color: #111;
   border-radius: 8px;
   box-shadow: 0 0 24px #0006;
 }
 
 h1 {
-  margin-bottom: 2rem;
-  color: green;
+  color: #4caf50;
   font-size: 2.5rem;
 }
 
-ol {
-  padding-left: 2rem;
-
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-p,
-li {
+p, li {
   color: #aaa;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
 }
 
+strong { color: #f2b138; }
+
+/* Advertencia de cartones parcialmente no disponibles */
+.warning {
+  padding: 0.8rem 1rem;
+  border-radius: 0.4rem;
+  background-color: #f2b13822;
+  border: 1px solid #f2b138;
+  color: #f2b138;
+  font-size: 1.1rem;
+}
+
+.hidden { display: none !important; }
+
+/* Cartones descargables */
 #download-sheets-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
-
+  gap: 1.2rem;
   width: 100%;
 }
 
-.btn-download {
+.sheet-download-wrapper {
   width: 80vw;
   max-width: 400px;
-  padding: 0.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+}
 
+.sheet-ticket-label {
+  font-size: 0.95rem;
+  color: #888;
+  text-align: center;
+}
+
+.btn-download {
+  width: 100%;
+  padding: 0.5rem 1.5rem;
   display: flex;
   gap: 0.8rem;
   justify-content: center;
   align-items: center;
-
-  font-size: 1.5rem;
-  letter-spacing: 2px;
+  font-size: 1.3rem;
+  letter-spacing: 1px;
   color: #000a;
   background-color: #28a745;
   border: none;
@@ -85,40 +95,27 @@ li {
   box-shadow: 0 0 5px #0003;
   cursor: pointer;
 
-  &:hover {
-    opacity: 0.8;
-  }
-
-  i {
-    font-size: 2rem;
-  }
+  i { font-size: 1.8rem; }
+  &:hover { opacity: 0.8; }
 }
 
 #btn-back-to-home {
   width: 80vw;
   max-width: 400px;
   padding: 0.5rem 1.5rem;
-
   align-self: center;
   display: flex;
   gap: 0.8rem;
   justify-content: center;
   align-items: center;
-
-  font-size: 1.5rem;
-  letter-spacing: 2px;
+  font-size: 1.3rem;
+  letter-spacing: 1px;
   color: #f2b138;
   background: none;
   border: none;
   border-radius: 4px;
-  box-shadow: 0 0 5px #0003;
   cursor: pointer;
 
-  &:hover {
-    opacity: 0.8;
-  }
-
-  span {
-    text-decoration: underline;
-  }
+  span { text-decoration: underline; }
+  &:hover { opacity: 0.8; }
 }
