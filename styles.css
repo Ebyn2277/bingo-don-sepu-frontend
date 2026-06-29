@@ -236,16 +236,35 @@ p  { font-size: 1.2rem; }
 }
 
 .sheet-card.available {
-  background-color: #0396a620;
-  border-color: #0396a6;
-  &:hover { transform: translateY(-2px); box-shadow: 0 4px 12px #0396a655; }
+  background-color: transparent;
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.sheet-card.available:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.08);
+}
+
+.sheet-card.pending-validation {
+  background-color: rgba(242, 177, 56, 0.12);
+  border-color: #f2b138;
+}
+
+.sheet-card.pending-validation:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(242, 177, 56, 0.18);
 }
 
 .sheet-card.sold {
-  background-color: #ffffff08;
-  border-color: #ffffff20;
+  background-color: rgba(76, 175, 80, 0.12);
+  border-color: #4caf50;
   cursor: default;
-  opacity: 0.5;
+  opacity: 1;
+}
+
+.sheet-card.sold:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.18);
 }
 
 .sheet-card.in-cart {
@@ -253,7 +272,11 @@ p  { font-size: 1.2rem; }
   border-color: #b3bf5a;
   cursor: pointer;
   opacity: 1;
-  &:hover { transform: translateY(-2px); box-shadow: 0 4px 12px #b3bf5a55; }
+}
+
+.sheet-card.in-cart:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px #b3bf5a55;
 }
 
 .sheet-status-badge {
@@ -262,11 +285,12 @@ p  { font-size: 1.2rem; }
   letter-spacing: 0.5px;
   padding: 0.15rem 0.5rem;
   border-radius: 999px;
-  background-color: #fff1;
+  background-color: rgba(255, 255, 255, 0.08);
 }
 
-.sheet-card.available  .sheet-status-badge { color: #0396a6; }
-.sheet-card.sold       .sheet-status-badge { color: #888; }
+.sheet-card.available  .sheet-status-badge { color: #ccc; }
+.sheet-card.pending-validation .sheet-status-badge { color: #f2b138; }
+.sheet-card.sold       .sheet-status-badge { color: #4caf50; }
 .sheet-card.in-cart    .sheet-status-badge { color: #b3bf5a; }
 
 .sheet-ticket-numbers {

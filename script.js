@@ -7,6 +7,7 @@ window.APP_CONFIG = {
 
 let paymentGateway = null;    // datos del gateway: precio, límite, etc.
 let allSheets = [];           // todos los cartones cargados desde la API
+let sheetComboNumberMap = new Map();
 let cart = [];                // cartones seleccionados por el usuario [{id, tickets, source_url}]
 let previewingSheet = null;   // cartón actualmente en el modal de vista previa
 let copyToastTimeout = null;
@@ -79,6 +80,7 @@ async function loadSheets() {
     // FIX #5: mensaje de error específico si falla la carga de cartones
     if (!res.ok) throw new Error("Error al cargar cartones.");
     allSheets = await res.json();
+    buildSheetComboNumberMap();
     renderSheetsGrid();
     toggleHidden("sheets-grid", false);
   } catch (err) {
@@ -93,6 +95,18 @@ async function loadSheets() {
   } finally {
     stopLoadingAnimation("sheets-loading-ellipsis", "sheets-loading-message", ellipsis);
   }
+}
+
+function buildSheetComboNumberMap() {
+  sheetComboNumberMap = new Map(
+    [...allSheets]
+      .sort((a, b) => new Date(a.created_at) - new Date(b.created_at) || a.id - b.id)
+      .map((sheet, index) => [sheet.id, index + 1])
+  );
+}
+
+function getSheetComboNumber(sheetId) {
+  return sheetComboNumberMap.get(sheetId) ?? sheetId;
 }
 
 // ─── Grid de cartones ─────────────────────────────────────────────────────────
@@ -116,17 +130,33 @@ function renderSheetsGrid() {
 
 function buildSheetCard(sheet) {
   const isAvailable = sheet.status === "available";
+  const isPendingValidation = sheet.status === "pending_validation";
   const isInCart = cart.some((s) => s.id === sheet.id);
 
   const card = document.createElement("div");
-  card.className = `sheet-card ${isAvailable ? "available" : "sold"} ${isInCart ? "in-cart" : ""}`;
+  const stateClass = isInCart
+    ? "in-cart"
+    : isAvailable
+    ? "available"
+    : isPendingValidation
+    ? "pending-validation"
+    : "sold";
+  card.className = `sheet-card ${stateClass}`;
   card.dataset.sheetId = sheet.id;
 
   const ticketNumbers = sheet.tickets?.map((t) => t.id).join(", ") || "—";
+  const comboNumber = getSheetComboNumber(sheet.id);
+  const statusLabel = isInCart
+    ? "En carrito"
+    : isAvailable
+    ? "Disponible"
+    : isPendingValidation
+    ? "Pendiente de validación"
+    : "Vendido";
 
   card.innerHTML = `
-    <span class="sheet-status-badge">${isInCart ? "En carrito" : isAvailable ? "Disponible" : "Vendido"}</span>
-    <p class="sheet-combo-number" style="font-weight: bold; color: #f2b138; margin-top: 0.3rem;">Combo #${sheet.id}</p>
+    <span class="sheet-status-badge">${statusLabel}</span>
+    <p class="sheet-combo-number" style="font-weight: bold; color: #f2b138; margin-top: 0.3rem;">Combo #${comboNumber}</p>
     <p class="sheet-ticket-numbers">${ticketNumbers}</p>
   `;
 
@@ -144,11 +174,26 @@ function refreshSheetsGrid() {
     if (!sheet) return;
 
     const isAvailable = sheet.status === "available";
+    const isPendingValidation = sheet.status === "pending_validation";
     const isInCart = cart.some((s) => s.id === sheet.id);
 
-    card.className = `sheet-card ${isAvailable ? "available" : "sold"} ${isInCart ? "in-cart" : ""}`;
+    const stateClass = isInCart
+      ? "in-cart"
+      : isAvailable
+      ? "available"
+      : isPendingValidation
+      ? "pending-validation"
+      : "sold";
+
+    card.className = `sheet-card ${stateClass}`;
     card.querySelector(".sheet-status-badge").textContent =
-      isInCart ? "En carrito" : isAvailable ? "Disponible" : "Vendido";
+      isInCart
+        ? "En carrito"
+        : isAvailable
+        ? "Disponible"
+        : isPendingValidation
+        ? "Pendiente de validación"
+        : "Vendido";
   });
 }
 
@@ -266,8 +311,9 @@ function updateCartUI() {
   cart.forEach((sheet) => {
     const li = document.createElement("li");
     const numbers = sheet.tickets?.map((t) => t.id).join(", ") || "—";
+    const comboNumber = getSheetComboNumber(sheet.id);
 
-    li.textContent = `Combo #${sheet.id} — Números: ${numbers}`;
+    li.textContent = `Combo #${comboNumber} — Números: ${numbers}`;
 
     const removeBtn = document.createElement("button");
     removeBtn.className = "btn-remove-from-cart-inline";
@@ -297,7 +343,8 @@ function handleClickConfirmBuying(e) {
 
   const sheetNumbers = cart.map((s) => {
     const numbers = s.tickets?.map((t) => t.id).join(", ");
-    return `Combo #${s.id} (${numbers})`;
+    const comboNumber = getSheetComboNumber(s.id);
+    return `Combo #${comboNumber} (${numbers})`;
   }).join(" | ");
 
   document.getElementById("confirmation-name").textContent = name;
@@ -378,6 +425,7 @@ async function refreshSheetsFromServer() {
     });
     if (res.ok) {
       allSheets = await res.json();
+      buildSheetComboNumberMap();
     }
   } catch (err) {
     console.warn("No se pudo refrescar cartones:", err);
@@ -436,14 +484,15 @@ async function handleClickSearchSheet() {
       dateCell.textContent = new Date(order.created_at).toLocaleDateString();
       row.appendChild(dateCell);
 
-      const sheetsCell = document.createElement("td");
-      order.sheets?.forEach((sheet, i) => {
+        const sheetsCell = document.createElement("td");
+      order.sheets?.forEach((sheet) => {
+        const comboNumber = getSheetComboNumber(sheet.id);
         const link = document.createElement("a");
         link.href = sheet.source_url;
         link.target = "_blank";
         link.rel = "noopener noreferrer";
-        link.download = `combo_${i + 1}.pdf`;
-        link.innerHTML = `<i class="fa-solid fa-file-arrow-down"></i> <span>Combo ${i + 1}</span>`;
+        link.download = `combo_${comboNumber}.pdf`;
+        link.innerHTML = `<i class="fa-solid fa-file-arrow-down"></i> <span>Combo ${comboNumber}</span>`;
         sheetsCell.appendChild(link);
       });
       row.appendChild(sheetsCell);
