@@ -35,7 +35,6 @@
       <h1>Compra de Combos</h1>
       <p>Selecciona tus cartones, confirma tu compra con tu nombre y número de WhatsApp, y el administrador validará tu reserva.</p>
       <div id="game-info" class="hidden">
-        <p>Precio por combo: <strong id="display-price">—</strong></p>
         <p>Máximo por usuario: <strong id="display-limit">—</strong> combo(s)</p>
       </div>
     </section>
@@ -115,13 +114,6 @@
             <div id="cart-summary" class="hidden">
               <h3>Carrito</h3>
               <ul id="cart-list"></ul>
-              <div id="price-display">
-                <p>Total a pagar:</p>
-                <div id="total-container">
-                  <p id="sub-total" class="hidden"></p>
-                  <p id="total-price" data-price="0">—</p>
-                </div>
-              </div>
               <button id="btn-clear-cart">Limpiar selección</button>
             </div>
           </li>
@@ -185,7 +177,6 @@
         <li><p>Nombre:</p><p id="confirmation-name"></p></li>
         <li><p>WhatsApp:</p><p id="confirmation-phone"></p></li>
         <li><p>Cartones seleccionados:</p><p id="confirmation-sheets"></p></li>
-        <li><p>Total a pagar:</p><p id="confirmation-total-price"></p></li>
       </ul>
       <p id="confirmation-modal-loading-message" class="hidden">
         Procesando orden.<span id="confirmation-modal-loading-ellipsis"></span>

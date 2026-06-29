@@ -64,7 +64,6 @@ async function loadGatewayStatus() {
   paymentGateway = data.payment_gateway;
 
   // Mostrar precio y límite en cabecera
-  document.getElementById("display-price").textContent = formatCOP(paymentGateway.sheet_price);
   document.getElementById("display-limit").textContent = paymentGateway.sell_limit;
   document.getElementById("cart-limit").textContent = paymentGateway.sell_limit;
   toggleHidden("game-info", false);
@@ -219,13 +218,11 @@ function updateCartUI() {
 
   if (count === 0) {
     toggleHidden("cart-summary", true);
-    toggleHidden("sub-total", true);
     return;
   }
 
   toggleHidden("cart-summary", false);
 
-  // Lista de cartones en carrito
   const cartList = document.getElementById("cart-list");
   cartList.innerHTML = "";
   cart.forEach((sheet) => {
@@ -245,23 +242,6 @@ function updateCartUI() {
     li.appendChild(removeBtn);
     cartList.appendChild(li);
   });
-
-  // Precio
-  const price = paymentGateway?.sheet_price ?? 0;
-  const subtotal = count * price;
-  const total = count > 1 ? Math.round(subtotal * (5 / 6)) : subtotal;
-
-  const subTotalEl = document.getElementById("sub-total");
-  const totalEl = document.getElementById("total-price");
-  totalEl.dataset.price = price;
-
-  if (count > 1) {
-    subTotalEl.textContent = formatCOP(subtotal);
-    toggleHidden("sub-total", false);
-  } else {
-    toggleHidden("sub-total", true);
-  }
-  totalEl.textContent = formatCOP(total);
 }
 
 // ─── Confirmación de compra ───────────────────────────────────────────────────
@@ -276,15 +256,11 @@ function handleClickConfirmBuying(e) {
   if (!/^\d{10}$/.test(phone)) { alert("Por favor ingresa un número de WhatsApp de 10 dígitos."); return; }
   if (cart.length === 0) { alert("No has seleccionado ningún cartón."); return; }
 
-  const price = paymentGateway?.sheet_price ?? 0;
-  const count = cart.length;
-  const total = count > 1 ? Math.round(count * price * (5 / 6)) : count * price;
   const sheetNumbers = cart.map((s) => s.tickets?.map((t) => t.id).join(", ")).join(" | ");
 
   document.getElementById("confirmation-name").textContent = name;
   document.getElementById("confirmation-phone").textContent = phone;
   document.getElementById("confirmation-sheets").textContent = sheetNumbers;
-  document.getElementById("confirmation-total-price").textContent = formatCOP(total);
 
   toggleHidden("confirmation-modal-container", false);
   toggleHidden("overlay", false);
