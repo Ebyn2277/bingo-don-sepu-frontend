@@ -10,6 +10,8 @@ let allSheets = [];           // todos los cartones cargados desde la API
 let cart = [];                // cartones seleccionados por el usuario [{id, tickets, source_url}]
 let previewingSheet = null;   // cartón actualmente en el modal de vista previa
 let copyToastTimeout = null;
+let isSubmitting = false;     // FIX #2: flag para evitar doble submit
+let isSearching = false;      // FIX #6: flag para evitar búsquedas paralelas
 
 // ─── Inicialización ───────────────────────────────────────────────────────────
 
@@ -63,7 +65,6 @@ async function loadGatewayStatus() {
   const data = await res.json();
   paymentGateway = data.payment_gateway;
 
-  // Mostrar el límite en cabecera
   document.getElementById("display-limit").textContent = paymentGateway.sell_limit;
   document.getElementById("cart-limit").textContent = paymentGateway.sell_limit;
   toggleHidden("game-info", false);
@@ -75,10 +76,20 @@ async function loadSheets() {
     const res = await fetch(`${window.APP_CONFIG.API_BASE_URL}/sheets`, {
       headers: { Accept: "application/json" },
     });
+    // FIX #5: mensaje de error específico si falla la carga de cartones
     if (!res.ok) throw new Error("Error al cargar cartones.");
     allSheets = await res.json();
     renderSheetsGrid();
     toggleHidden("sheets-grid", false);
+  } catch (err) {
+    // Re-lanzar para que loadPage muestre error-message, pero también
+    // mostrar feedback específico dentro de la sección de cartones
+    const sheetsGrid = document.getElementById("sheets-grid");
+    if (sheetsGrid) {
+      sheetsGrid.innerHTML = "<p class='no-sheets-message'>No se pudieron cargar los cartones. Intenta recargar la página.</p>";
+      toggleHidden("sheets-grid", false);
+    }
+    throw err;
   } finally {
     stopLoadingAnimation("sheets-loading-ellipsis", "sheets-loading-message", ellipsis);
   }
@@ -127,7 +138,6 @@ function buildSheetCard(sheet) {
 }
 
 function refreshSheetsGrid() {
-  // Re-render each card in place to preserve scroll position
   document.querySelectorAll(".sheet-card").forEach((card) => {
     const sheetId = parseInt(card.dataset.sheetId);
     const sheet = allSheets.find((s) => s.id === sheetId);
@@ -144,31 +154,57 @@ function refreshSheetsGrid() {
 
 // ─── Modal vista previa de cartón ─────────────────────────────────────────────
 
-function openSheetPreviewModal(sheet) {
+async function openSheetPreviewModal(sheet) {
   previewingSheet = sheet;
 
   const ticketNumbers = sheet.tickets?.map((t) => t.id).join(", ") || "—";
   document.getElementById("sheet-preview-title").textContent = `Cartón — números: ${ticketNumbers}`;
   document.getElementById("sheet-preview-numbers").textContent = ticketNumbers;
 
-  // Carga el PDF en el iframe
+  // FIX #4: asignar onload ANTES de cambiar src, e ignorar el disparo de src=""
   const iframe = document.getElementById("sheet-preview-iframe");
-  iframe.src = "";
   toggleHidden("sheet-preview-loading", false);
-  iframe.onload = () => toggleHidden("sheet-preview-loading", true);
+
+  let firstLoad = true;
+  iframe.onload = () => {
+    if (firstLoad) {
+      // Primer disparo corresponde a src="" (about:blank), ignorar
+      firstLoad = false;
+      return;
+    }
+    toggleHidden("sheet-preview-loading", true);
+  };
+
+  iframe.src = "";
   iframe.src = sheet.source_url;
 
-  // Botones según estado del carrito
+  // FIX #3: refrescar estado del servidor antes de mostrar botones
+  await refreshSheetsFromServer();
+
+  // Buscar el estado actualizado del cartón
+  const updatedSheet = allSheets.find((s) => s.id === sheet.id);
+  const currentlyAvailable = updatedSheet ? updatedSheet.status === "available" : false;
   const inCart = cart.some((s) => s.id === sheet.id);
-  toggleHidden("btn-add-to-cart", inCart);
-  toggleHidden("btn-remove-from-cart", !inCart);
+
+  // Si el cartón ya no está disponible y no está en el carrito, actualizarlo
+  if (!currentlyAvailable && !inCart) {
+    if (updatedSheet) previewingSheet = updatedSheet;
+    refreshSheetsGrid();
+    toggleHidden("btn-add-to-cart", true);
+    toggleHidden("btn-remove-from-cart", true);
+  } else {
+    toggleHidden("btn-add-to-cart", inCart);
+    toggleHidden("btn-remove-from-cart", !inCart);
+  }
 
   toggleHidden("sheet-preview-modal-container", false);
   toggleHidden("overlay", false);
 }
 
 function closeSheetPreviewModal() {
-  document.getElementById("sheet-preview-iframe").src = "";
+  const iframe = document.getElementById("sheet-preview-iframe");
+  iframe.onload = null; // Limpiar handler para evitar disparos huérfanos
+  iframe.src = "";
   previewingSheet = null;
   toggleHidden("sheet-preview-modal-container", true);
   toggleHidden("overlay", true);
@@ -187,7 +223,6 @@ function handleClickAddToCart() {
   updateCartUI();
   refreshSheetsGrid();
 
-  // Actualizar botones del modal
   toggleHidden("btn-add-to-cart", true);
   toggleHidden("btn-remove-from-cart", false);
 }
@@ -225,11 +260,13 @@ function updateCartUI() {
   toggleHidden("cart-summary", false);
 
   const cartList = document.getElementById("cart-list");
+  // FIX #1: limpiar la lista antes de re-renderizar para evitar acumulación
+  cartList.innerHTML = "";
+
   cart.forEach((sheet) => {
     const li = document.createElement("li");
     const numbers = sheet.tickets?.map((t) => t.id).join(", ") || "—";
 
-    // Modificación para mostrar Combo y Números
     li.textContent = `Combo #${sheet.id} — Números: ${numbers}`;
 
     const removeBtn = document.createElement("button");
@@ -277,6 +314,10 @@ function closeConfirmationModal() {
 }
 
 async function handleClickFinishBuying() {
+  // FIX #2: evitar doble submit con flag
+  if (isSubmitting) return;
+  isSubmitting = true;
+
   const name = document.getElementById("name").value.trim();
   const phone = document.getElementById("phone").value.trim();
   const sheetIds = cart.map((s) => s.id);
@@ -299,7 +340,6 @@ async function handleClickFinishBuying() {
     const data = await res.json();
 
     if (!res.ok) {
-      // 409: ninguno disponible — informar y refrescar grid
       if (res.status === 409) {
         await refreshSheetsFromServer();
         cart = [];
@@ -312,7 +352,6 @@ async function handleClickFinishBuying() {
       throw new Error(JSON.stringify(data));
     }
 
-    // Éxito — puede venir con advertencia si algunos cartones no estaban disponibles
     localStorage.setItem("successData", JSON.stringify(data));
     window.location.href = "successful.html";
 
@@ -322,7 +361,12 @@ async function handleClickFinishBuying() {
     window.location.href = "error.html";
   } finally {
     stopLoadingAnimation("confirmation-modal-loading-ellipsis", "confirmation-modal-loading-message", ellipsis);
-    toggleHidden("confirmation-modal-buttons", false);
+    // FIX #2: solo restaurar botones y flag si NO hubo redirección exitosa
+    // (en caso de error, el usuario puede reintentar)
+    if (!localStorage.getItem("successData")) {
+      toggleHidden("confirmation-modal-buttons", false);
+    }
+    isSubmitting = false;
   }
 }
 
@@ -343,6 +387,9 @@ async function refreshSheetsFromServer() {
 // ─── Sección de búsqueda ──────────────────────────────────────────────────────
 
 async function handleClickSearchSheet() {
+  // FIX #6: evitar búsquedas paralelas
+  if (isSearching) return;
+
   toggleHidden("search-results", true);
   toggleHidden("table-orders-results", true);
   toggleHidden("search-error-message", true);
@@ -350,6 +397,10 @@ async function handleClickSearchSheet() {
 
   const searchParam = document.getElementById("search-input").value.trim();
   if (!searchParam) return;
+
+  isSearching = true;
+  const searchBtn = document.getElementById("btn-search");
+  searchBtn.disabled = true;
 
   toggleHidden("search-loading-message", false);
   const ellipsis = setLoadingAnimation("search-loading-ellipsis");
@@ -409,7 +460,8 @@ async function handleClickSearchSheet() {
     toggleHidden("search-error-message", false);
   } finally {
     stopLoadingAnimation("search-loading-ellipsis", "search-loading-message", ellipsis);
-    toggleHidden("search-loading-message", true);
+    isSearching = false;
+    searchBtn.disabled = false;
   }
 }
 
