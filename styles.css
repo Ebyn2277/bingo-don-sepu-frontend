@@ -197,7 +197,6 @@ p  { font-size: 1.2rem; }
 
 #buying-first-step  { box-shadow: 0 0 5px #f21b42; .numeration { color: #f21b42; } }
 #buying-second-step { box-shadow: 0 0 5px #0396a6; .numeration { color: #0396a6; } }
-#buying-third-step  { box-shadow: 0 0 5px #b3bf5a; .numeration { color: #b3bf5a; } }
 
 #search-first-step  { box-shadow: 0 0 5px #f2b138; .numeration { color: #f2b138; } }
 #search-second-step { box-shadow: 0 0 5px #b3bf5a; .numeration { color: #b3bf5a; } }
@@ -361,33 +360,6 @@ p  { font-size: 1.2rem; }
     border-radius: 0.3rem;
     margin-bottom: 1.2rem;
   }
-}
-
-/* ── OPCIONES DE PAGO ───────────────────────────────────────────────────────── */
-#payment-options {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-
-  li {
-    padding: 0;
-    margin: 0;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr) auto;
-    align-items: center;
-
-    strong { font-size: 1.2rem; }
-    p { text-decoration: underline; }
-  }
-}
-
-.btn-copy {
-  padding-inline: 0.7rem;
-  color: #fff;
-  background-color: #b3bf5a;
-  text-shadow: 0 0 5px #3336;
-  letter-spacing: 1px;
-  i { font-size: 1.5rem; margin-right: 0.5rem; }
 }
 
 /* ── BOTÓN CONFIRMAR ────────────────────────────────────────────────────────── */
