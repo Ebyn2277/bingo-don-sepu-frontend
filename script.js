@@ -63,7 +63,7 @@ async function loadGatewayStatus() {
   const data = await res.json();
   paymentGateway = data.payment_gateway;
 
-  // Mostrar precio y límite en cabecera
+  // Mostrar el límite en cabecera
   document.getElementById("display-limit").textContent = paymentGateway.sell_limit;
   document.getElementById("cart-limit").textContent = paymentGateway.sell_limit;
   toggleHidden("game-info", false);
@@ -115,6 +115,7 @@ function buildSheetCard(sheet) {
 
   card.innerHTML = `
     <span class="sheet-status-badge">${isInCart ? "En carrito" : isAvailable ? "Disponible" : "Vendido"}</span>
+    <p class="sheet-combo-number" style="font-weight: bold; color: #f2b138; margin-top: 0.3rem;">Combo #${sheet.id}</p>
     <p class="sheet-ticket-numbers">${ticketNumbers}</p>
   `;
 
@@ -224,11 +225,12 @@ function updateCartUI() {
   toggleHidden("cart-summary", false);
 
   const cartList = document.getElementById("cart-list");
-  cartList.innerHTML = "";
   cart.forEach((sheet) => {
     const li = document.createElement("li");
     const numbers = sheet.tickets?.map((t) => t.id).join(", ") || "—";
-    li.textContent = numbers;
+
+    // Modificación para mostrar Combo y Números
+    li.textContent = `Combo #${sheet.id} — Números: ${numbers}`;
 
     const removeBtn = document.createElement("button");
     removeBtn.className = "btn-remove-from-cart-inline";
@@ -256,7 +258,10 @@ function handleClickConfirmBuying(e) {
   if (!/^\d{10}$/.test(phone)) { alert("Por favor ingresa un número de WhatsApp de 10 dígitos."); return; }
   if (cart.length === 0) { alert("No has seleccionado ningún cartón."); return; }
 
-  const sheetNumbers = cart.map((s) => s.tickets?.map((t) => t.id).join(", ")).join(" | ");
+  const sheetNumbers = cart.map((s) => {
+    const numbers = s.tickets?.map((t) => t.id).join(", ");
+    return `Combo #${s.id} (${numbers})`;
+  }).join(" | ");
 
   document.getElementById("confirmation-name").textContent = name;
   document.getElementById("confirmation-phone").textContent = phone;
