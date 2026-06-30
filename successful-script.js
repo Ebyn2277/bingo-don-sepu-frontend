@@ -60,11 +60,17 @@ window.onload = () => {
   const downloadContainer = document.getElementById("download-sheets-container");
   const fragment = document.createDocumentFragment();
 
-  order.sheets?.forEach((sheet, i) => {
+  order.sheets?.forEach((sheet) => {
     const ticketNumbers = sheet.tickets?.map((t) => t.id).join(", ") || "";
+    const comboNumber = sheetComboNumberMap.get(sheet.id) ?? sheet.id;
 
     const wrapper = document.createElement("div");
     wrapper.className = "sheet-download-wrapper";
+
+    const comboLabel = document.createElement("h3");
+    comboLabel.className = "combo-download-label";
+    comboLabel.innerHTML = `<strong>Combo #${comboNumber}</strong>`;
+    wrapper.appendChild(comboLabel);
 
     if (ticketNumbers) {
       const label = document.createElement("p");
@@ -75,8 +81,8 @@ window.onload = () => {
 
     const button = document.createElement("button");
     button.className = "btn-download";
-    button.innerHTML = `<i class="fa-solid fa-file-arrow-down"></i> Descargar Combo ${i + 1}`;
-    button.onclick = () => downloadPDF(sheet.source_url, `combo_${i + 1}.pdf`);
+    button.innerHTML = `<i class="fa-solid fa-file-arrow-down"></i> Descargar`;
+    button.onclick = () => downloadPDF(sheet.source_url, `combo_${comboNumber}.pdf`);
     wrapper.appendChild(button);
 
     fragment.appendChild(wrapper);
