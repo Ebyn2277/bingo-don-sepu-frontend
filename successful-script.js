@@ -11,12 +11,17 @@ window.onload = () => {
 
   const successData = JSON.parse(raw);
 
-  // La respuesta del backend ahora tiene forma { order: {...}, warning?: "...", requested_sheet_count?: number }
+  // La respuesta del backend ahora tiene forma { order: {...}, warning?: "...", requested_sheet_count?: number, sheetComboNumberMap?: [[id, num], ...] }
   // Se mantiene compatibilidad si viniera directamente el objeto order.
   const order = successData.order ?? successData;
   const warning = successData.warning ?? null;
   const requestedCount = successData.requested_sheet_count ?? order.sheet_count;
   const purchasedCount = order.sheets?.length ?? 0;
+  
+  // Reconstruir el mapa de IDs a números de combos desde el array de pares
+  const sheetComboNumberMap = successData.sheetComboNumberMap 
+    ? new Map(successData.sheetComboNumberMap)
+    : new Map();
 
   const orderSummary = document.getElementById("order-summary");
   if (orderSummary) {
@@ -41,8 +46,9 @@ window.onload = () => {
       if (unavailableContainer && unavailableList) {
         unavailableList.innerHTML = "";
         successData.unavailable_ids.forEach((sheetId) => {
+          const comboNumber = sheetComboNumberMap.get(sheetId) ?? sheetId;
           const li = document.createElement("li");
-          li.textContent = `ID de cartón: ${sheetId}`;
+          li.textContent = `Combo #${comboNumber}`;
           unavailableList.appendChild(li);
         });
         unavailableContainer.classList.remove("hidden");

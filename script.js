@@ -276,6 +276,8 @@ function handleClickAddToCart() {
 
   toggleHidden("btn-add-to-cart", true);
   toggleHidden("btn-remove-from-cart", false);
+  
+  closeSheetPreviewModal();
 }
 
 function handleClickRemoveFromCart() {
@@ -405,7 +407,10 @@ async function handleClickFinishBuying() {
       throw new Error(JSON.stringify(data));
     }
 
-    localStorage.setItem("successData", JSON.stringify(data));
+    localStorage.setItem("successData", JSON.stringify({
+      ...data,
+      sheetComboNumberMap: Array.from(sheetComboNumberMap.entries())
+    }));
     window.location.href = "successful.html";
 
   } catch (err) {
