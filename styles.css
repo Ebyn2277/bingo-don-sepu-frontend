@@ -539,6 +539,23 @@ p  { font-size: 1.2rem; }
   width: 100%;
   height: 100%;
   border: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.sheet-reserved-by {
+  margin-top: 0.6rem;
+  font-size: 0.95rem;
+  line-height: 1.3;
+  color: #ddd;
+}
+
+.sheet-card.pending-validation .sheet-reserved-by {
+  color: #f2b138;
+}
+
+.sheet-card.sold .sheet-reserved-by {
+  color: #4caf50;
 }
 
 #sheet-preview-actions {

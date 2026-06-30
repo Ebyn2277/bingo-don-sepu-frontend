@@ -11,10 +11,21 @@ window.onload = () => {
 
   const successData = JSON.parse(raw);
 
-  // La respuesta del backend ahora tiene forma { order: {...}, warning?: "..." }
+  // La respuesta del backend ahora tiene forma { order: {...}, warning?: "...", requested_sheet_count?: number }
   // Se mantiene compatibilidad si viniera directamente el objeto order.
   const order = successData.order ?? successData;
   const warning = successData.warning ?? null;
+  const requestedCount = successData.requested_sheet_count ?? order.sheet_count;
+  const purchasedCount = order.sheets?.length ?? 0;
+
+  const orderSummary = document.getElementById("order-summary");
+  if (orderSummary) {
+    if (purchasedCount === requestedCount) {
+      orderSummary.textContent = `Se reservaron correctamente los ${purchasedCount} cartón(es) que seleccionaste.`;
+    } else {
+      orderSummary.textContent = `Se reservaron ${purchasedCount} de ${requestedCount} cartón(es).`; 
+    }
+  }
 
   // Mostrar advertencia si algunos cartones no estuvieron disponibles
   if (warning) {
@@ -22,6 +33,20 @@ window.onload = () => {
     if (warningEl) {
       warningEl.textContent = warning;
       warningEl.classList.remove("hidden");
+    }
+
+    if (Array.isArray(successData.unavailable_ids) && successData.unavailable_ids.length) {
+      const unavailableContainer = document.getElementById("unavailable-sheets-container");
+      const unavailableList = document.getElementById("unavailable-sheets-list");
+      if (unavailableContainer && unavailableList) {
+        unavailableList.innerHTML = "";
+        successData.unavailable_ids.forEach((sheetId) => {
+          const li = document.createElement("li");
+          li.textContent = `ID de cartón: ${sheetId}`;
+          unavailableList.appendChild(li);
+        });
+        unavailableContainer.classList.remove("hidden");
+      }
     }
   }
 

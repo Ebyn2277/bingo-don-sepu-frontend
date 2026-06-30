@@ -154,10 +154,19 @@ function buildSheetCard(sheet) {
     ? "Pendiente de validación"
     : "Vendido";
 
+  const reservedByLabel = !isAvailable && sheet.reserved_by
+    ? `<p class="sheet-reserved-by">${
+        isPendingValidation
+          ? `Reservado por ${sheet.reserved_by}`
+          : `Comprado por ${sheet.reserved_by}`
+      }</p>`
+    : "";
+
   card.innerHTML = `
     <span class="sheet-status-badge">${statusLabel}</span>
     <p class="sheet-combo-number" style="font-weight: bold; color: #f2b138; margin-top: 0.3rem;">Combo #${comboNumber}</p>
     <p class="sheet-ticket-numbers">${ticketNumbers}</p>
+    ${reservedByLabel}
   `;
 
   if (isAvailable || isInCart) {
@@ -209,18 +218,15 @@ async function openSheetPreviewModal(sheet) {
   // FIX #4: asignar onload ANTES de cambiar src, e ignorar el disparo de src=""
   const iframe = document.getElementById("sheet-preview-iframe");
   toggleHidden("sheet-preview-loading", false);
+  iframe.style.opacity = "0";
+  toggleHidden("btn-add-to-cart", true);
+  toggleHidden("btn-remove-from-cart", true);
 
-  let firstLoad = true;
   iframe.onload = () => {
-    if (firstLoad) {
-      // Primer disparo corresponde a src="" (about:blank), ignorar
-      firstLoad = false;
-      return;
-    }
     toggleHidden("sheet-preview-loading", true);
+    iframe.style.opacity = "1";
   };
 
-  iframe.src = "";
   iframe.src = sheet.source_url;
 
   // FIX #3: refrescar estado del servidor antes de mostrar botones

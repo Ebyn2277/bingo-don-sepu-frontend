@@ -13,7 +13,8 @@
   <main>
     <h1>¡Reserva realizada!</h1>
 
-    <!-- Advertencia si hubo cartones no disponibles al momento de confirmar -->
+    <!-- Resumen del resultado de la compra -->
+    <p id="order-summary" class="order-summary"></p>
     <p id="warning-message" class="hidden warning"></p>
 
     <p>
@@ -22,6 +23,12 @@
     </p>
 
     <div id="download-sheets-container"></div>
+
+    <div id="unavailable-sheets-container" class="hidden">
+      <h2>Cartones no comprados</h2>
+      <p>Los siguientes cartones no pudieron comprarse:</p>
+      <ul id="unavailable-sheets-list"></ul>
+    </div>
 
     <p>
       Si no encuentras los botones de descarga, vuelve al inicio, busca tus
