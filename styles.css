@@ -39,32 +39,6 @@ button {
   &:hover { opacity: 0.8; }
 }
 
-/* ── HIDDEN ─────────────────────────────────────────────────────────────────── */
-.hidden,
-body > div.hidden,
-#main-content.hidden,
-#overlay.hidden,
-#table-orders-results.hidden,
-#no-results-message.hidden,
-#search-error-message.hidden,
-#search-results.hidden,
-#search-sheets-section.hidden,
-#buying-process-section.hidden,
-#confirmation-modal-loading-message.hidden,
-#copy-toast-message.hidden,
-#search-loading-message.hidden,
-#sub-total.hidden,
-#cart-summary.hidden,
-#sheets-grid.hidden,
-#game-info.hidden,
-#sheet-preview-modal-container.hidden,
-#confirmation-modal-container.hidden,
-#btn-add-to-cart.hidden,
-#btn-remove-from-cart.hidden,
-#confirmation-modal-buttons.hidden {
-  display: none !important;
-}
-
 /* ── OVERLAY ────────────────────────────────────────────────────────────────── */
 #overlay {
   position: fixed;
@@ -702,4 +676,30 @@ p  { font-size: 1.2rem; }
   font-size: 1.5rem;
 
   span { position: absolute; }
+}
+
+/* ── HIDDEN ─────────────────────────────────────────────────────────────────── */
+.hidden,
+body > div.hidden,
+#main-content.hidden,
+#overlay.hidden,
+#table-orders-results.hidden,
+#no-results-message.hidden,
+#search-error-message.hidden,
+#search-results.hidden,
+#search-sheets-section.hidden,
+#buying-process-section.hidden,
+#confirmation-modal-loading-message.hidden,
+#copy-toast-message.hidden,
+#search-loading-message.hidden,
+#sub-total.hidden,
+#cart-summary.hidden,
+#sheets-grid.hidden,
+#game-info.hidden,
+#sheet-preview-modal-container.hidden,
+#confirmation-modal-container.hidden,
+#btn-add-to-cart.hidden,
+#btn-remove-from-cart.hidden,
+#confirmation-modal-buttons.hidden {
+  display: none !important;
 }
