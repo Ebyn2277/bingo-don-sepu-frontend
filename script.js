@@ -211,7 +211,7 @@ function refreshSheetsGrid() {
 
 // ─── Modal vista previa de cartón ─────────────────────────────────────────────
 
-async function openSheetPreviewModal(sheet) {
+function openSheetPreviewModal(sheet) {
   previewingSheet = sheet;
 
   const ticketNumbers = sheet.tickets?.map((t) => t.id).join(", ") || "—";
@@ -232,27 +232,33 @@ async function openSheetPreviewModal(sheet) {
 
   iframe.src = sheet.source_url;
 
-  // FIX #3: refrescar estado del servidor antes de mostrar botones
-  await refreshSheetsFromServer();
-
-  // Buscar el estado actualizado del cartón
-  const updatedSheet = allSheets.find((s) => s.id === sheet.id);
-  const currentlyAvailable = updatedSheet ? updatedSheet.status === "available" : false;
   const inCart = cart.some((s) => s.id === sheet.id);
+  const currentlyAvailable = sheet.status === "available";
 
-  // Si el cartón ya no está disponible y no está en el carrito, actualizarlo
-  if (!currentlyAvailable && !inCart) {
-    if (updatedSheet) previewingSheet = updatedSheet;
-    refreshSheetsGrid();
-    toggleHidden("btn-add-to-cart", true);
-    toggleHidden("btn-remove-from-cart", true);
-  } else {
-    toggleHidden("btn-add-to-cart", inCart);
-    toggleHidden("btn-remove-from-cart", !inCart);
-  }
+  toggleHidden("btn-add-to-cart", !currentlyAvailable || inCart);
+  toggleHidden("btn-remove-from-cart", !inCart);
 
   toggleHidden("sheet-preview-modal-container", false);
   toggleHidden("overlay", false);
+
+  // Refrescar el estado en segundo plano sin bloquear la apertura.
+  refreshSheetsFromServer().then(() => {
+    const updatedSheet = allSheets.find((s) => s.id === sheet.id);
+    const availableAfterRefresh = updatedSheet ? updatedSheet.status === "available" : false;
+    const inCartAfterRefresh = cart.some((s) => s.id === sheet.id);
+
+    if (!availableAfterRefresh && !inCartAfterRefresh) {
+      if (updatedSheet) previewingSheet = updatedSheet;
+      refreshSheetsGrid();
+      toggleHidden("btn-add-to-cart", true);
+      toggleHidden("btn-remove-from-cart", true);
+    } else {
+      toggleHidden("btn-add-to-cart", inCartAfterRefresh || !availableAfterRefresh);
+      toggleHidden("btn-remove-from-cart", !inCartAfterRefresh);
+    }
+  }).catch((err) => {
+    console.warn("No se pudo actualizar el estado del cartón:", err);
+  });
 }
 
 function closeSheetPreviewModal() {
