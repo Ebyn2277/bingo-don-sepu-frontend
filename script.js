@@ -26,14 +26,17 @@ function initEventListeners() {
   document.getElementById("btn-open-search-section").addEventListener("click", handleClickOpenSearchSection);
   document.getElementById("btn-search").addEventListener("click", handleClickSearchSheet);
   document.getElementById("btn-clear-cart").addEventListener("click", handleClickClearCart);
-  document.getElementById("btn-confirm-buying").addEventListener("click", handleClickConfirmBuying);
+  document.getElementById("btn-floating-checkout").addEventListener("click", openPurchaseModal);
   document.getElementById("btn-close-sheet-preview").addEventListener("click", closeSheetPreviewModal);
   document.getElementById("sheet-preview-overlay").addEventListener("click", closeSheetPreviewModal);
   document.getElementById("btn-add-to-cart").addEventListener("click", handleClickAddToCart);
   document.getElementById("btn-remove-from-cart").addEventListener("click", handleClickRemoveFromCart);
   document.getElementById("btn-close-confirmation-modal").addEventListener("click", closeConfirmationModal);
+  document.getElementById("btn-close-purchase-modal").addEventListener("click", closePurchaseModal);
+  document.getElementById("purchase-overlay").addEventListener("click", closePurchaseModal);
   document.getElementById("btn-finish-buying").addEventListener("click", handleClickFinishBuying);
-  document.getElementById("request-form").addEventListener("submit", (e) => e.preventDefault());
+  document.getElementById("btn-purchase-confirm").addEventListener("click", handleClickPurchaseConfirm);
+  document.getElementById("purchase-form").addEventListener("submit", (e) => e.preventDefault());
 
   document.querySelectorAll(".btn-copy").forEach((btn) => {
     btn.addEventListener("click", () => handleClickCopy(btn));
@@ -301,9 +304,10 @@ function handleClickClearCart() {
 function updateCartUI() {
   const count = cart.length;
   document.getElementById("cart-count").textContent = count;
+  document.getElementById("floating-checkout-count").textContent = count;
 
-  const confirmBtn = document.getElementById("btn-confirm-buying");
-  confirmBtn.disabled = count === 0;
+  const floatingBtn = document.getElementById("btn-floating-checkout");
+  toggleHidden("btn-floating-checkout", count === 0);
 
   if (count === 0) {
     toggleHidden("cart-summary", true);
@@ -337,17 +341,58 @@ function updateCartUI() {
   });
 }
 
-// ─── Confirmación de compra ───────────────────────────────────────────────────
+// ─── Modal de compra ─────────────────────────────────────────────────────────
 
-function handleClickConfirmBuying(e) {
+function openPurchaseModal() {
+  if (cart.length === 0) return;
+
+  // Llenar carrito del modal
+  const purchaseCartList = document.getElementById("purchase-modal-cart-list");
+  purchaseCartList.innerHTML = "";
+
+  const fragment = document.createDocumentFragment();
+  cart.forEach((sheet) => {
+    const li = document.createElement("li");
+    const numbers = sheet.tickets?.map((t) => t.id).join(", ") || "—";
+    const comboNumber = getSheetComboNumber(sheet.id);
+    li.textContent = `Combo #${comboNumber} — Números: ${numbers}`;
+    fragment.appendChild(li);
+  });
+
+  purchaseCartList.appendChild(fragment);
+  document.getElementById("purchase-modal-count").textContent = cart.length;
+
+  // Limpiar formulario
+  document.getElementById("purchase-name").value = "";
+  document.getElementById("purchase-phone").value = "";
+
+  toggleHidden("purchase-modal-container", false);
+  toggleHidden("purchase-overlay", false);
+}
+
+function closePurchaseModal() {
+  toggleHidden("purchase-modal-container", true);
+  toggleHidden("purchase-overlay", true);
+}
+
+function handleClickPurchaseConfirm(e) {
   e.preventDefault();
 
-  const name = document.getElementById("name").value.trim();
-  const phone = document.getElementById("phone").value.trim();
+  const name = document.getElementById("purchase-name").value.trim();
+  const phone = document.getElementById("purchase-phone").value.trim();
 
-  if (!name) { alert("Por favor ingresa tu nombre."); return; }
-  if (!/^\d{10}$/.test(phone)) { alert("Por favor ingresa un número de WhatsApp de 10 dígitos."); return; }
-  if (cart.length === 0) { alert("No has seleccionado ningún cartón."); return; }
+  if (!name) {
+    alert("Por favor ingresa tu nombre.");
+    return;
+  }
+  if (!/^\d{10}$/.test(phone)) {
+    alert("Por favor ingresa un número de WhatsApp de 10 dígitos.");
+    return;
+  }
+  if (cart.length === 0) {
+    alert("No has seleccionado ningún cartón.");
+    return;
+  }
 
   const sheetNumbers = cart.map((s) => {
     const numbers = s.tickets?.map((t) => t.id).join(", ");
@@ -359,8 +404,16 @@ function handleClickConfirmBuying(e) {
   document.getElementById("confirmation-phone").textContent = phone;
   document.getElementById("confirmation-sheets").textContent = sheetNumbers;
 
+  closePurchaseModal();
   toggleHidden("confirmation-modal-container", false);
   toggleHidden("overlay", false);
+}
+
+// ─── Confirmación de compra ───────────────────────────────────────────────────
+
+function handleClickConfirmBuying(e) {
+  e.preventDefault();
+  openPurchaseModal();
 }
 
 function closeConfirmationModal() {
@@ -373,8 +426,8 @@ async function handleClickFinishBuying() {
   if (isSubmitting) return;
   isSubmitting = true;
 
-  const name = document.getElementById("name").value.trim();
-  const phone = document.getElementById("phone").value.trim();
+  const name = document.getElementById("confirmation-name").textContent.trim();
+  const phone = document.getElementById("confirmation-phone").textContent.trim();
   const sheetIds = cart.map((s) => s.id);
 
   toggleHidden("confirmation-modal-buttons", true);

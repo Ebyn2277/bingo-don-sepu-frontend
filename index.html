@@ -105,7 +105,7 @@
 
           <!-- Paso 1: selección de cartones -->
           <li id="buying-first-step">
-            <p><span class="numeration">1</span>Elige los cartones que quieres comprar. Cada combo trae 6 números.</p>
+            <p><span class="numeration">1</span>Elige los cartones que quieres comprar. Cada combo trae 4 números.</p>
             <p id="cart-counter">Seleccionados: <strong id="cart-count">0</strong> / <strong id="cart-limit">—</strong></p>
 
             <div id="sheets-loading-message">
@@ -121,20 +121,10 @@
             </div>
           </li>
 
-          <!-- Paso 2: datos de contacto -->
-          <li id="buying-second-step">
-            <p><span class="numeration">2</span>Ingresa tus datos de contacto.</p>
-            <form id="request-form">
-              <label for="name">Nombre y apellidos</label>
-              <input type="text" id="name" name="name" placeholder="Tu nombre completo" required />
-              <label for="phone">Número de WhatsApp</label>
-              <input type="tel" id="phone" name="phone" placeholder="Ej: 3001234567" pattern="[0-9]{10}" required />
-            </form>
-          </li>
         </ol>
 
-        <button id="btn-confirm-buying" type="submit" form="request-form" disabled>
-          <i class="fa-solid fa-cart-shopping"></i> Confirmar compra
+        <button id="btn-floating-checkout" class="hidden" type="button">
+          <i class="fa-solid fa-cart-shopping"></i> <span id="floating-checkout-count">0</span>
         </button>
       </section>
     </div><!-- /action-sections-container -->
@@ -187,6 +177,40 @@
       <div id="confirmation-modal-buttons">
         <button id="btn-finish-buying">
           <i class="fa-solid fa-check"></i> Finalizar compra
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       MODAL: ingresar datos de compra
+  ══════════════════════════════════════════ -->
+  <div id="purchase-modal-container" class="hidden">
+    <div id="purchase-overlay"></div>
+    <div id="purchase-modal">
+      <button id="btn-close-purchase-modal" type="button"><i class="fa-solid fa-xmark"></i></button>
+      <h2>Confirmar compra</h2>
+
+      <div id="purchase-modal-content">
+        <!-- Resumen de cartones -->
+        <div id="purchase-modal-summary">
+          <h3>Cartones seleccionados</h3>
+          <ul id="purchase-modal-cart-list"></ul>
+          <p id="purchase-modal-total">Total: <strong id="purchase-modal-count">0</strong> combo(s)</p>
+        </div>
+
+        <!-- Formulario de contacto -->
+        <form id="purchase-form">
+          <label for="purchase-name">Nombre y apellidos</label>
+          <input type="text" id="purchase-name" name="purchase-name" placeholder="Tu nombre completo" required />
+          <label for="purchase-phone">Número de WhatsApp</label>
+          <input type="tel" id="purchase-phone" name="purchase-phone" placeholder="Ej: 3001234567" pattern="[0-9]{10}" required />
+        </form>
+      </div>
+
+      <div id="purchase-modal-buttons">
+        <button id="btn-purchase-confirm" type="submit" form="purchase-form">
+          <i class="fa-solid fa-check"></i> Confirmar
         </button>
       </div>
     </div>
