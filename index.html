@@ -64,7 +64,7 @@
             <p><span class="numeration">1</span>Ingresa tu número de WhatsApp y presiona "Buscar".</p>
             <input id="search-input" type="tel" placeholder="Ej: 3001234567" pattern="[0-9]{10}" />
             <button id="btn-search" type="button">
-              <i class="fa-solid fa-magnifying-glass"></i> Buscar
+              <i class="fa-solid fa-magnifying-glass"></i> BUSCAR
             </button>
           </li>
           <li id="search-second-step">
@@ -112,19 +112,21 @@
               Cargando cartones.<span id="sheets-loading-ellipsis"></span>
             </div>
 
-            <div id="sheets-grid" class="hidden"></div>
-
             <div id="cart-summary" class="hidden">
               <h3>Carrito</h3>
               <ul id="cart-list"></ul>
-              <button id="btn-clear-cart">Limpiar selección</button>
+              <button id="btn-clear-cart">LIMPIAR SELECCIÓN</button>
             </div>
+
+            <div id="sheets-grid" class="hidden"></div>
+
+            
           </li>
 
         </ol>
 
         <button id="btn-floating-checkout" class="hidden" type="button">
-          <i class="fa-solid fa-cart-shopping"></i> <span id="floating-checkout-count">0</span>
+          <i class="fa-solid fa-cart-shopping"></i> <span>COMPRAR (<span id="floating-checkout-count">0</span>)</span>
         </button>
       </section>
     </div><!-- /action-sections-container -->
@@ -150,10 +152,10 @@
       </div>
       <div id="sheet-preview-actions">
         <button id="btn-add-to-cart" class="hidden">
-          <i class="fa-solid fa-plus"></i> Añadir al carrito
+          <i class="fa-solid fa-plus"></i> AÑADIR AL CARRITO
         </button>
         <button id="btn-remove-from-cart" class="hidden">
-          <i class="fa-solid fa-minus"></i> Quitar del carrito
+          <i class="fa-solid fa-minus"></i> QUITAR DEL CARRITO
         </button>
       </div>
     </div>
@@ -176,7 +178,7 @@
       </p>
       <div id="confirmation-modal-buttons">
         <button id="btn-finish-buying">
-          <i class="fa-solid fa-check"></i> Finalizar compra
+          <i class="fa-solid fa-check"></i> FINALIZAR COMPRA
         </button>
       </div>
     </div>
@@ -210,7 +212,7 @@
 
       <div id="purchase-modal-buttons">
         <button id="btn-purchase-confirm" type="submit" form="purchase-form">
-          <i class="fa-solid fa-check"></i> Confirmar
+          <i class="fa-solid fa-check"></i> CONFIRMAR COMPRA
         </button>
       </div>
     </div>
