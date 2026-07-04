@@ -32,5 +32,5 @@ window.onload = () => {
   }
 
   document.getElementById("message-error").textContent = errorDisplay;
-  localStorage.clear();
+  localStorage.removeItem("errorData");
 };

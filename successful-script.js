@@ -89,7 +89,7 @@ window.onload = () => {
   });
 
   downloadContainer.appendChild(fragment);
-  localStorage.clear();
+  localStorage.removeItem("successData");
 };
 
 function downloadPDF(url, filename) {
