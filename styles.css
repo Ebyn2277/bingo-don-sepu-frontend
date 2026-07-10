@@ -324,11 +324,13 @@ p  { font-size: 1.2rem; }
 
 /* ── BOTÓN FLOTANTE DE COMPRA ───────────────────────────────────────────────── */
 #btn-floating-checkout {
-  width: 100%;
+  width: 90%;
   height: 3.5rem;
   max-width: 470px;
   position: fixed;
-  left: calc(50% - 235px);
+  left: 0;
+  right: 0;
+  margin: auto;
   bottom: 2rem;
   z-index: 900;
 

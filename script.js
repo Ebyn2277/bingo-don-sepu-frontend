@@ -123,8 +123,18 @@ function renderSheetsGrid() {
     return;
   }
 
+  const sortedSheets = [...allSheets].sort((a, b) => {
+    const aAvailable = a.status === "available" || cart.some((s) => s.id === a.id);
+    const bAvailable = b.status === "available" || cart.some((s) => s.id === b.id);
+    if (aAvailable !== bAvailable) return aAvailable ? -1 : 1;
+
+    const aNum = getSheetComboNumber(a.id);
+    const bNum = getSheetComboNumber(b.id);
+    return aNum - bNum;
+  });
+
   const fragment = document.createDocumentFragment();
-  allSheets.forEach((sheet) => {
+  sortedSheets.forEach((sheet) => {
     const card = buildSheetCard(sheet);
     fragment.appendChild(card);
   });
