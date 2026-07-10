@@ -24,7 +24,7 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 3rem;
+  gap: 1rem;
   background-color: #fff1;
 }
 
@@ -63,7 +63,7 @@ button {
 #logo {
   width: 90%;
   max-width: 360px;
-  min-height: 300px;
+  min-height: 200px;
   margin: auto;
   background: url("src/logo_bingo_v4_high_quality.png") no-repeat center;
   background-size: contain;
